@@ -1,4 +1,6 @@
 \documentclass[12pt]{report}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
 \input{packages.tex}
 
 % -= DOCUMENT =-
@@ -52,7 +54,7 @@ Une méthode classique pour traiter ce problème est le cadre \textit{Large Defo
 
 Parmi les nombreuses approches de recalage, nous nous concentrerons sur le \emph{Large Deformation Diffeomorphic Metric Mapping}\footnote{Que l'on appellera LDDMM par la suite}. Sa force réside dans sa capacité à modéliser des déformations tout en garantissant que la transformation obtenue est un \emph{difféomorphisme}~- c'est-à-dire une application bijective, lisse et d'inverse lisse. Cette propriété est cruciale pour préserver la topologie des structures (anatomiques par exemple): des ensembles connexes restent connexes, des surfaces lisses restent lisses, et il n'y a pas de nouvelles pliures ou de déchirures. Le cadre de \emph{Large Deformation Diffeomorphic Metric Mapping} fournit une formulation variationnelle du problème de recalage, où la transformation recherchée est obtenue comme solution d'un problème de minimisation d'énergie.
 
-L'objectif de ce chapitre est de présenter les fondements théoriques du modèle LDDMM\@.
+L'objectif de ce chapitre est de présenter le modèle LDDMM\@.
 
 \section{Déformations et Difféomorphismes}
 
@@ -119,7 +121,7 @@ Ce chapitre a posé les fondements nécessaires à l'étude des cas particuliers
 
 
 % -= Lie =-
-\chapter{Le groupe $SO(n)$ et son algèbre de Lie $\mathfrak{so}(n)$}
+\chapter{\texorpdfstring{Le groupe $SO(n)$ et son algèbre de Lie $\mathfrak{so}(n)$}{Le groupe SO (n) et son algèbre de Lie so (n)}}
 
 Dans ce chapitre, nous nous intéresserons aux particularités du groupe $SO(n)$ et de son algèbre de Lie $\mathfrak{so}(n)$ pour $n\geqslant 2$. Voici quelques définitions pour commencer.
 
@@ -183,7 +185,7 @@ On appelle \textbf{espace tangent} en $g$ à $G$, que l'on note $T_{g}G$, l'ense
 \end{comment}
 
 % Groupe de Lie SO(n)
-\section{Le groupe de Lie $SO(n)$}
+\section{\texorpdfstring{Le groupe de Lie $SO(n)$}{Le groupe de Lie SO (n)}}
 
 Le \textbf{groupe spécial orthogonal} $SO(n)$ est un sous-groupe du \textbf{groupe orthogonal} $O(n)$. C'est le groupe des matrices de rotation à $n$ dimensions. On peut l'écrire:
 \[
@@ -310,7 +312,7 @@ $SO(n)$ hérite aussi localement de toutes les propriétés de $O(n)$, comme sa 
 \end{remark}
 
 
-\subsection{Propriétés de l'action du groupe $SO(n)$ sur $\mathbb{R}^n$}
+\subsection{Propriétés de l'action du groupe \texorpdfstring{$SO(n)$}{SO (n)} sur \texorpdfstring{$\mathbb{R}^n$}{Rn}}
 Soient $G$ un groupe et $X$ un ensemble.
 
 \begin{definition}[Action de groupe]\leavevmode\\
@@ -364,7 +366,7 @@ Re_i = e_i \quad \forall~1\leq i\leq n.
 Ainsi, les colonnes de $R$ sont celles de l'identité, donc $R=I_n$.~\underline{L'action est fidèle}.\\
 
 L'action de $SO(n)$ dans $\mathbb{R}^n$ n'est \textbf{pas libre}:\\
-Si l'action est libre, alors $\forall x\in \mathbb{R}^n$, si $x\neq 0$ et $R\neq I_n$ alors $Rx\neq x$.\\
+Si l'action est libre, alors pour tout $x\in \mathbb{R}^n$, si $x\neq 0$ et $R\neq I_n$ alors $Rx\neq x$.\\
 Prenons $R=\begin{pmatrix} 1 & 0 \\ 0 & S \end{pmatrix}$ une matrice par bloc de $SO(n)$ où $S\in SO(n-1)$ différente de l'identité et $x=(1,0,\dots ,0)$.\\
 Alors $u(R,x)=Rx=x$ car $x$ est dans la direction de la première colonne de $R$.\\
 Donc \underline{l'action de $SO(n)$ dans $\mathbb{R}^n$ n'est pas libre}.\\
@@ -410,7 +412,7 @@ Les orbites de l'action naturelle de $SO(n)$ sur $\mathbb{R}^n$ sont exactement 
 \end{remark}
 
 
-\subsection{Propriétés topologiques de $SO(n)$}
+\subsection{Propriétés topologiques de \texorpdfstring{$SO(n)$}{SO (n)}}
 
 \begin{theorem}[Compacité en dimension finie]\label{thm:compact-dim-finie}\leavevmode\\
 Soient $(X,\|~\|)$ un espace vectoriel normé de dimension finie et $E\subset X$ une partie de $X$. Alors $E$ est compacte si et seulement si $E$ est fermée et bornée. 
@@ -496,7 +498,7 @@ Et \underline{$SO(n)$ est connexe par arcs} car c'est une variété différentie
 
 
 % Algèbre de Lie so(n)
-\section{L'algèbre de Lie $\mathfrak{so}(n)$}
+\section{L'algèbre de Lie \texorpdfstring{$\mathfrak{so}(n)$}{so (n)}}
 
 L'outil principal qui nous permettra d'étudier les groupes de Lie est leur algèbre de Lie. Définissons cette structure pour les rotations et intéressons-nous aux propriétés différentielles des groupes de Lie. Prenons $G$ un groupe de Lie et $e\in G$ son élément neutre.
 
@@ -515,7 +517,7 @@ et qui satisfait l'identité de Jacobi:
 Le commutateur de $\mathfrak{so}(n)$ est, pour $A,B\in\mathfrak{so}(n)$:
 \[
 \begin{aligned}
-[\cdot,\cdot] : \mathfrak{g} \times \mathfrak{g} &\to \mathfrak{g}\\
+(\relax[\cdot,\cdot]) : \mathfrak{g} \times \mathfrak{g} &\to \mathfrak{g}\\
 (A,B) &\mapsto  AB-BA
 \end{aligned}
 \]
@@ -772,16 +774,16 @@ Ainsi, on retrouve que $e^A=R$, et donc que pour tout $R\in SO(n)$, il existe $A
 
 
 % -= Equa diff =-
-\chapter{Étude de l'équation différentielle linéaire $\dot{x}(t)=Ax(t)$}
+\chapter{Étude de l'équation différentielle linéaire \texorpdfstring{$\dot{x}(t)=Ax(t)$}{x.\ (t)=Ax (t)}}
 
 Dans ce chapitre, nous verrons comment cette équation différentielle linéaire apparait naturellement sur le groupe spécial orthogonal $SO(n)$, l'importance de ce résultat, ainsi que sa résolution. Commençons avec le groupe de Lie $SO(n)$.
 
+\begin{comment}
 \begin{exemple}
 La translation à droite sur le groupe de Lie $SO(n)$ permet, comme on l'a vu, de ``passer'' d'un espace tangent à un autre de manière isomorphe.\\
 La figure ci-dessous \texttt{Figure~(\ref{fig:espaces-tangents})} illustre ce principe sur la surface $z=x^2-y^2$ (qui joue ici le rôle d'une variété différentielle). Le long de la courbe $y=1$, on a représenté les plans tangents ${T}_{g_0}G$ et ${T}_{g_t}G$ en $g_0=(-2,1,3)$ et $g_t=(0,1,-1)$, ainsi que les vecteurs tangents correspondants. Le passage de l'un à l'autre peut être réalisé par une translation à droite convenable.
 \end{exemple}
 
-\begin{comment}
 \begin{figure}[H]
   \centering
   \begin{tikzpicture}
@@ -855,7 +857,7 @@ La figure ci-dessous \texttt{Figure~(\ref{fig:espaces-tangents})} illustre ce pr
 \end{figure}
 \end{comment}
 
-\section{Obtenir l'équation différentielle $\dot{x}(t)=Ax(t)$}
+\section{Obtenir l'équation différentielle \texorpdfstring{$\dot{x}(t)=Ax(t)$}{x.\ (t)=Ax (t)}}
 
 Cherchons à exprimer la différentielle de la translation à droite afin de lier le groupe $SO(n)$ à son algèbre de Lie. Remarquons une égalité que l'on utilisera juste après.
 \begin{remark}\label{rq:id}
@@ -914,7 +916,7 @@ Donc si on suppose que ce vecteur est constant en fonction du temps $A(t)=A$,
 La solution de l'équation différentielle linéaire ci-dessus permet, à partir d'un seul élément $A$ de l'algèbre de Lie $\mathfrak{so}(n)$, de créer un mouvement sur tout le groupe $SO(n)$ a partir d'applications de translations à droite.
 \end{remark}
 
-\section{Solution de $\dot{x}(t)=Ax(t)$}
+\section{Solution de \texorpdfstring{$\dot{x}(t)=Ax(t)$}{x.\ (t)=Ax (t)}}
 
 Pour garantir l'existence et l'unicité des trajectoires sur le groupe, revenons au cas général avec le théorème suivant.
 
@@ -972,12 +974,12 @@ Ainsi, l'unique solution de l'équation différentielle est \underline{$x(t)=e^{
 
 
 % -= Cas particuliers de SO(2) et SO(3) =-
-\chapter{Cas particuliers de $SO(2)$ et $SO(3)$}\label{chap:SO2-SO3}
+\chapter{Cas particuliers de \texorpdfstring{$SO(2)$}{SO (2)} et \texorpdfstring{$SO(3)$}{SO (3)}}\label{chap:SO2-SO3}
 
 Dans ce chapitre, nous sortirons un peu de la théorie en nous intéressant à des cas simples: les groupes de rotations $SO(2)$ et $SO(3)$.\\
 Ces deux groupes vont nous donner un aperçu plus concret du cadre \textit{LDDMM}\@.
 
-\section{$SO(2)$, Les rotations en dimension 2}
+\section{\texorpdfstring{$SO(2)$}{SO (2)}, Les rotations en dimension 2}
 
 Le groupe $SO(2)$ est très simple, il décrit les rotations du plan autour de l'origine en dimension 2.
 
@@ -1093,7 +1095,7 @@ On peut simplifier notre minimisation, et utiliser la valeur absolue au lieu d'u
 &\text{tel que }\left\{\begin{array}{ll}\dot{x}(t)=A_{t}x(t)\\x_0=x_S\end{array}\right.
 \end{aligned}
 \]
-Si l'on cherche une géodésique\footnote{La rotation “la plus naturelle”, sans accélération, à vitesse angulaire constante}, on pose $\omega_t=\omega$ pour tout $t$. Le problème se réduit à l'optimisation d'un seul scalaire paramétrique $\omega\in\mathbb{R}$:
+Si l'on cherche une géodésique\footnote{La rotation ``la plus naturelle'', sans accélération, à vitesse angulaire constante}, on pose $\omega_t=\omega$ pour tout $t$. Le problème se réduit à l'optimisation d'un seul scalaire paramétrique $\omega\in\mathbb{R}$:
 \[
 \begin{aligned}
 \min_{\omega\in \mathbb{R}}&~J(\omega)=\frac{1}{2}|\omega|^2+\|x_1(\omega)-x_T\|\\
@@ -1146,7 +1148,7 @@ Pour résoudre ce problème numériquement, on utilise un algorithme itératif:
 \end{itemize}
 La descente de gradient peut être réalisée à l'aide de l'algorithme \texttt{L-BFGS} de PyTorch.
 
-\subsection{Recalage rigide sur $SO(2)$}
+\subsection{Recalage rigide sur \texorpdfstring{$SO(2)$}{SO (2)}}
 
 On souhaite toujours minimiser le problème suivant:
 \[
@@ -1252,12 +1254,12 @@ J(\omega^{(0)}) = 9.488581 \qquad &\rightarrow \qquad J(\omega^{(1)}) = 8.950083
 \end{aligned}
 \]
 
-\begin{figure}[H]\label{fig:RecalageRotationSO2}
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.48\textwidth]{../Images/RecalageRotationSO2_Etape1.png}
   \hfill
   \includegraphics[width=0.48\textwidth]{../Images/RecalageRotationSO2.png}
-  \caption{Première et $50^{\text{ième}}$ étape du recalage sur les rotations $SO(2)$.}
+  \caption{Première et $50^{\text{ième}}$ étape du recalage sur les rotations $SO(2)$.}\label{fig:RecalageRotationSO2}
 \end{figure}
 \end{exemple}
 
