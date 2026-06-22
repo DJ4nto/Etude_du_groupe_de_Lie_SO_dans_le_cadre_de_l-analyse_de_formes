@@ -1,0 +1,104 @@
+% Encodage
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+% Bibliographie
+\usepackage[numbers]{natbib}
+\usepackage{bibentry}
+
+% Langue
+\usepackage[french]{babel}
+\addto\captionsfrench{
+  \renewcommand{\bibname}{Références}
+}
+
+% Mise en page
+\usepackage[a4paper, margin=2.5cm]{geometry}
+\usepackage{setspace}
+
+% Maths
+\usepackage{amsmath, amssymb}
+
+% Figures
+\usepackage{pgfplots}
+\usepackage{float}
+\pgfplotsset{compat=1.18}
+
+% Images
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{overpic}
+
+% Hyperliens
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    citecolor=blue,
+    linkcolor=black,
+    urlcolor=blue
+}
+
+% Mise en forme chapitres
+\usepackage{titlesec}
+
+\titleformat{\chapter}[hang]
+  {\normalfont\huge\bfseries}
+  {\thechapter}
+  {1em}
+  {}
+
+% Environnements mathématiques
+\usepackage{amsthm}
+
+\newtheorem{theorem}{Théorème}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemme}
+\newtheorem{corollary}[theorem]{Corollaire}
+\newtheorem{exemple}[theorem]{Exemple}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Définition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remarque}
+
+\addto\captionsfrench{\renewcommand{\proofname}{Preuve}}
+
+% Couleurs
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+% Gestion du code
+\usepackage{listings}
+
+\addto\captionsfrench{\renewcommand{\lstlistingname}{Code}}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+% Citation
+\usepackage{doi}
+
+% Commentaires
+\usepackage{comment}

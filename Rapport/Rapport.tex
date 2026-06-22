@@ -1,0 +1,1448 @@
+\documentclass[12pt]{report}
+\input{packages.tex}
+
+% -= DOCUMENT =-
+\begin{document}
+
+% -= PAGE DE GARDE =-
+\pagenumbering{gobble}
+\input{titlepage.tex}
+\thispagestyle{empty}
+\clearpage
+\pagenumbering{arabic}
+
+
+% -= DESCRIPTION DU STAGE =-
+\chapter*{Description du stage}
+\addcontentsline{toc}{chapter}{Description du stage}
+\section*{Contexte Scientifique}
+L'analyse de formes est un domaine à l'intersection de la géométrie différentielle, de la mécanique géométrique et du traitement d'image. Son objectif principal est de quantifier et de modéliser les déformations de formes telles que des images, courbes, surfaces, etc.~\cite{You10}. Un problème qui nous intéresse particulièrement est celui du recalage, c'est-à-dire, étant donné une forme source et une forme cible, comment modéliser la déformation optimale permettant de transformer l'une en l'autre.
+
+Une méthode classique pour traiter ce problème est le cadre \textit{Large Deformation Diffeomorphic Metric Mapping} (LDDMM,~\cite{FMTY05}), qui modélise les déformations comme des flots générés par des champs de vecteurs. Ce stage propose d'aborder les bases de cette théorie en s'intéressant au cas particulier des rotations, modélisées par le groupe $SO(n)$. Ce groupe est fondamental dans l'analyse des formes car avec les translations, il permet de modéliser l'entièreté des déformations possibles pour des corps solides~\cite{Hol11}.
+
+\section*{Objectifs du stage}
+\begin{itemize}
+  \item Revue de la littérature pour comprendre les bases du modèle \textit{Large Deformation Diffeomorphic Metric Mapping} (LDDMM).
+  \item Étude du groupe de rotations $SO(n)$ et de son algèbre de Lie $\mathfrak{so}(n)$.
+  \item Étude de l'équation différentielle linéaire $\dot{x}(t)=Ax(t)$ avec $A\in\mathfrak{so}(n)$.
+  \item Cas particuliers de $SO(2)$ et $SO(3)$.
+  \item Implémentation en Python de modèles de recalage avec $SO(n)$.
+\end{itemize}
+
+
+% -= TABLE DES MATIERES =-
+\clearpage
+\pagenumbering{roman}
+\tableofcontents
+\newpage
+\clearpage
+\pagenumbering{arabic}
+\setcounter{page}{2}
+
+
+% -= INTRODUCTION =-
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+
+%Expliquer le stage, ce qu'est l'analyse de formes ainsi que tout ce qui se trouve dans le rapport
+
+
+% -= LDDMM =-
+\chapter{Le modèle de recalage LDDMM}
+
+Parmi les nombreuses approches de recalage, nous nous concentrerons sur le \emph{Large Deformation Diffeomorphic Metric Mapping}\footnote{Que l'on appellera LDDMM par la suite}. Sa force réside dans sa capacité à modéliser des déformations tout en garantissant que la transformation obtenue est un \emph{difféomorphisme}~- c'est-à-dire une application bijective, lisse et d'inverse lisse. Cette propriété est cruciale pour préserver la topologie des structures (anatomiques par exemple): des ensembles connexes restent connexes, des surfaces lisses restent lisses, et il n'y a pas de nouvelles pliures ou de déchirures. Le cadre de \emph{Large Deformation Diffeomorphic Metric Mapping} fournit une formulation variationnelle du problème de recalage, où la transformation recherchée est obtenue comme solution d'un problème de minimisation d'énergie.
+
+L'objectif de ce chapitre est de présenter les fondements théoriques du modèle LDDMM\@.
+
+\section{Déformations et Difféomorphismes}
+
+En analyse de formes, on cherche à transformer une forme source $I_0$ vers une forme cible $I_1$. Pour pouvoir effectuer cette transformation, on veut comparer ces deux formes en prenant en compte leurs propriétés géométriques. Et pour préserver la topologie de la forme, on ne déforme pas l'objet directement, mais l'espace ambiant via un flot de difféomorphisme $t\mapsto\varphi_t$ qui envoie la source sur la cible~\cite{Pie25}.
+
+\begin{definition}[Flot de difféomorphismes]\leavevmode\\
+On considère une famille de difféomorphismes
+\[
+\varphi_t : \mathbb{R}^d \to \mathbb{R}^d, \quad t \in [0,1],
+\]
+engendrée par un champ de vitesse dépendant du temps $v_t : \mathbb{R}^d \to \mathbb{R}^d$.\\
+Le flot est défini comme la solution de l'équation différentielle:
+\[
+\left\{\begin{array}{ll}\dot{\varphi}_t = v_t \circ \varphi_t,\\\varphi_0 = Id.\end{array}\right.
+\]
+Cette équation décrit le transport des points de l'espace sous l'action du champ de vitesse $v_t$.
+\end{definition}
+
+La déformation à l'instant $t$ est donnée par l'action du difféomorphisme sur la forme: $I_1=\varphi_t\cdot I_0$. Cette action dépend de la nature géométrique de la forme étudiée.
+\begin{itemize}
+  \item \textbf{Points repères (Landmarks)}: Si $I_0=(x_1,\dots,x_N)\in{(\mathbb{R}^d)}^N$, l'action est l'évaluation ponctuelle: $\varphi\cdot I_0:=\varphi(I_0)$.
+  \item \textbf{Courbes paramétrées}: Si $q\in\mathcal{C}^1(I;\mathbb{R}^d)$, l'action est la composition à gauche: $\varphi\cdot q:=\varphi\circ q$.
+  \item \textbf{Images}: Si $I_0\in\mathcal{L}^2(\Omega,\mathbb{R})$, l'action est la composition avec l'inverse (pour préserver l'intensité): $\varphi\cdot I_0:=I_0\circ\varphi^{-1}$.
+\end{itemize}
+
+\begin{exemple}\label{ex:recalage-rigide-coq}
+Voyons un exemple de recalage par rotation sur $SO(2)$ avec une forme source $I_0$ et une autre forme cible $I_1$ séparées par une rotation (cet exemple~(\ref{ex:recalage-lecocq}) sera détaillé plus loin). La forme source, à laquelle on a appliqué une rotation, recouvre parfaitement la forme cible:
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{../Images/EvolutionRecalageCoq0.png}
+  \caption{Recalage sur les rotations $SO(2)$ d'un coq.}
+\end{figure}
+\end{exemple}
+
+\section{Problème variationnel LDDMM}
+Le problème de recalage consiste à déterminer le champ de vitesse $v_t$ qui minimise une énergie composée de deux termes:
+
+\begin{itemize}
+\item Un terme de régularité contrôlant le ``coût'' de la déformation (à gauche de l'addition),
+\item Un terme d'attache aux données mesurant la similarité entre l'image transformée et la cible (à droite).
+\end{itemize}
+Le problème s'écrit:
+\[
+\begin{aligned}
+\min_{v\in L^2([0,1],V)}~&J(v)=\frac{1}{2}\int_{0}^{1}\|v_t\|_{V}^2\,dt+\|I_0\circ\varphi_1^{-1}-I_1\|_{L^2}\\
+&\text{tel que }\left\{\begin{array}{ll}\dot{\varphi}_t=v_t\circ\varphi_t\\\varphi_0=Id\end{array}\right.
+\end{aligned}
+\]
+
+\begin{proposition}
+Notre équation de minimisation admet bien un minimum.
+\end{proposition}
+
+\begin{proof}
+On utilise une méthode de calcul variationnel~\cite{MP25}, ``Direct method in the calculus of variations'' pour montrer que l'équation de minimisation admet un minimum.
+\end{proof}
+
+\begin{remark}
+Pour appliquer la méthode LDDMM, on n'a besoin que d'une action du groupe des difféomorphismes sur l'espace des données (ici les images). La formulation du problème de minimisation repose uniquement sur l'application du groupe à cet espace via $I_0 \mapsto I_0 \circ \varphi^{-1}$.
+\end{remark}
+
+Ce chapitre a posé les fondements nécessaires à l'étude des cas particuliers, comme celui des rotations $SO(2)$ et $SO(3)$, qui seront abordés dans les chapitres suivants.
+
+
+% -= Lie =-
+\chapter{Le groupe $SO(n)$ et son algèbre de Lie $\mathfrak{so}(n)$}
+
+Dans ce chapitre, nous nous intéresserons aux particularités du groupe $SO(n)$ et de son algèbre de Lie $\mathfrak{so}(n)$ pour $n\geqslant 2$. Voici quelques définitions pour commencer.
+
+\begin{definition} [Variété différentielle]\leavevmode\\
+Une \textbf{variété différentielle} est un espace qui est localement assimilable\footnote{On pourrait aussi dire: localement homéomorphe à $\mathbb{R}^n$} à un espace euclidien~\cite{Hol24}.
+\end{definition}
+
+Considérons $G$ une variété différentielle.
+
+\begin{definition} [Espace tangent]\leavevmode\\
+On appelle \textbf{espace tangent} en $g$ à $G$, que l'on note $T_{g}G$, l'ensemble des vecteurs tangents en $g$.
+\end{definition}
+
+\begin{comment}
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[
+      view={60}{30},
+      axis lines=center,
+      xlabel={$x$},
+      ylabel={$y$},
+      zlabel={$z$},
+      xmin=-1.5, xmax=1.5,
+      ymin=-1.5, ymax=1.5,
+      zmin=-1.5, zmax=1.5,
+      ticks=none,
+      axis equal
+      ]
+      % Tracé de la sphère
+      \addplot3[
+          surf,
+          colormap/viridis,
+          samples=35,
+          domain=0:360,
+          y domain=0:180,
+          z buffer=sort,
+          opacity=0.7
+      ] ({cos(x)*sin(y)}, {sin(x)*sin(y)}, {cos(y)});
+      % Tracé du plan tangent
+      \addplot3[
+          surf,
+          fill=cyan!40!white,
+          faceted color=cyan!70!black,
+          opacity=0.6,
+          samples=2,
+          domain=0.2:1.2,
+          y domain=-0.5:0.5
+      ] {1.4142 - x};
+      % Point de tangence
+      \addplot3[
+          only marks,
+          mark=*,
+          mark size=1pt,
+          color=blue
+      ] coordinates {(0.7071, 0, 0.7071)};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Figure du plan tangent à la sphère en un point.}
+\end{figure}
+\end{comment}
+
+% Groupe de Lie SO(n)
+\section{Le groupe de Lie $SO(n)$}
+
+Le \textbf{groupe spécial orthogonal} $SO(n)$ est un sous-groupe du \textbf{groupe orthogonal} $O(n)$. C'est le groupe des matrices de rotation à $n$ dimensions. On peut l'écrire:
+\[
+SO(n)=\{A\in \mathcal{M}_n(\mathbb{R})~|~\det{A}=1~;~A^{T}A=I_n\}
+\]
+
+\begin{definition} [Groupe de Lie]\leavevmode\\
+Un \textbf{groupe de Lie} est une variété différentielle qui est également un groupe, de telle sorte que l'opération de composition du groupe et l'opération d'inversion sont des applications lisses\footnote{Lisse: de classe $\mathcal{C}^{\infty}$}~\cite{Hol24}.
+\end{definition}
+
+\begin{theorem} [Théorème de submersion]\label{thm:submersion}\leavevmode\\
+Soient $f\in \mathcal{C}^1(\mathbb{R}^n,\mathbb{R}^m)$ et $G := f^{-1}(e)$ où $e\in \mathbb{R}^m$.\\
+Si $f$ est une submersion (i.e.~si $Df(x)$ est surjective en tout point $x$ de $G$), alors $G$ est une sous-variété de l'espace $\mathbb{R}^n$ de dimension $n-m$.
+\end{theorem}
+
+\begin{proof}
+Admis
+\end{proof}
+
+\begin{proposition}\label{prop:SO-groupe-de-Lie}
+$SO(n)$ est un groupe de Lie
+\end{proposition}
+
+\begin{proof}
+Nous montrons d'abord que $SO(n)$ est un groupe (1), puis qu'il possède une structure de variété différentielle compatible avec les opérations de groupe (2). \medskip
+
+(1) \textbf{$SO(n)$ est un groupe pour le produit matriciel.}\\
+Soient $A,B\in SO(n)$, montrons que le produit est stable:
+\[
+{(AB)}^T(AB)=B^{T}A^{T}AB=B^{T}B=I_n\qquad\text{et}\qquad\det(AB)=\det(A)\det(B)=1.
+\]
+Ainsi $AB\in SO(n)$.\\
+L'associativité est celle du produit matriciel.\\
+L'élément neutre est la matrice identité $I_n$, qui appartient à $SO(n)$ puisque
+\[
+I_n^{T}I_n=I_n\qquad\text{et}\qquad\det(I_n)=1.
+\]
+Enfin, si $A\in SO(n)$, alors
+\[
+A^{T}A=I_n,
+\]
+d'où
+\[
+A^{-1}=A^T.
+\]
+Comme
+\[
+\det(A^{-1})=\frac{1}{\det(A)}=1,
+\]
+on obtient $A^{-1}\in SO(n)$.\\
+Ainsi \underline{$SO(n)$ est un groupe} et le produit matriciel est bien une loi de composition interne sur l'ensemble $SO(n)$.
+
+\medskip
+(2) \textbf{$SO(n)$ est une variété différentielle.}\\
+Montrons que $SO(n)$ est muni d'une structure de variété différentielle, comme sous-variété de l'espace $\mathcal{M}_n(\mathbb{R})$.\\
+Considérons l'application
+\[
+\begin{aligned}
+f \colon \mathcal{M}_n(\mathbb{R}) &\longrightarrow \mathcal{S}_n(\mathbb{R})\\
+X &\longmapsto X^{T}X
+\end{aligned}
+\]
+où $\mathcal{S}_n(\mathbb{R})$ désigne l'espace des matrices symétriques.\\
+On remarque que
+\[
+O(n)=f^{-1}(I_n).
+\]
+Calculons la différentielle de $f$.\\
+Soient $X\in O(n)$, et $H\in \mathcal{M}_n(\mathbb{R})$:
+\[
+\begin{aligned}
+f(X+H)&={(X+H)}^{T}(X+H)\\
+&=X^{T}X+X^{T}H+H^{T}X+H^{T}H\\
+&=f(X)+X^{T}H+H^{T}X+H^{T}H
+\end{aligned}
+\]
+Comme la norme subordonnée est sous-multiplicative
+\[
+\|H^{T}H\|\leq\|H^T\|\,\|H\|=\|H\|^2,
+\]
+on a
+\[
+\begin{aligned}
+f(X+H)&=f(X)+X^{T}H+H^{T}X+O(\|H\|^2)\\
+&=f(X)+Df(X)H+O(\|H\|^2)
+\end{aligned}
+\]
+La différentielle de $f$ en $X$ est donc donnée par la partie linéaire en $H$,
+\[
+Df(X)H=X^{T}H+H^{T}X.
+\]
+Il reste à montrer que $f$ est une submersion en tout point de $O(n)$, donc que $Df(X)$ est surjective:\\
+Soit $Y\in \mathcal{S}_n(\mathbb{R})$, déterminons $H$
+\[
+\begin{aligned}
+Df(X)H=Y&\Leftrightarrow X^{T}H+H^{T}X=Y.
+\end{aligned}
+\]
+Posons $H=\frac{1}{2}XY$ de telle sorte que pour $X\in O(n)$
+\[
+\begin{aligned}
+Df(X)\frac{1}{2}XY=Y&\Leftrightarrow X^{T}\frac{1}{2}XY+(\frac{1}{2}XY){}^{T}X=Y\\
+&\Leftrightarrow \frac{1}{2}X^{T}XY+\frac{1}{2}Y^{T}X^{T}X=Y\\
+\end{aligned}
+\]
+or $X^{T}X=I_n$ et $Y^{T}=Y$, donc
+\[
+Df(X)\frac{1}{2}XY=\frac{1}{2}I_{n}Y+\frac{1}{2}YI_n=Y.
+\]
+On a trouvé pour n'importe quel $Y$, qu'il y a un antécédent $H$. Ainsi, $Df$ est surjective et donc $O(n)$ est bien une sous-variété de l'espace $\mathcal{M}_n(\mathbb{R})$ (par le \textit{Théorème de submersion~\ref{thm:submersion}}).\\
+Posons $U=\{A\in \mathcal{M}_n(\mathbb{R})~|~\det{A}>0\}$ un ouvert (le déterminant est continu et $U$ est l'image réciproque d'un ouvert par le déterminant).\\
+L'intersection d'une sous-variété avec un ouvert de l'espace ambiant est encore une sous-variété. Comme $SO(n)=O(n)\cap U$, alors \underline{$SO(n)$ est une sous-variété}.
+\end{proof}
+
+\begin{remark}
+$SO(n)$ hérite aussi localement de toutes les propriétés de $O(n)$, comme sa dimension ou encore son espace tangent.
+\[
+\begin{aligned}
+\dim(SO(n))&=\dim(\textit{Espace de départ})-\dim(\textit{Espace d'arrivée})\\
+&=n^2-\frac{n(n+1)}{2}\\
+&=\frac{n(n-1)}{2}
+\end{aligned}
+\]
+\end{remark}
+
+
+\subsection{Propriétés de l'action du groupe $SO(n)$ sur $\mathbb{R}^n$}
+Soient $G$ un groupe et $X$ un ensemble.
+
+\begin{definition}[Action de groupe]\leavevmode\\
+On dit que $G$ agit à gauche sur $X$ s'il existe une application $u\colon G\times X\longrightarrow X$ vérifiant
+\begin{itemize}
+  \item $u(e,x)=x$ pour tout $x\in X$ avec $e$ l'élément neutre de $G$,
+  \item pour tout $g,g'\in G$ et $x\in X$
+  \[
+  u(g,u(g',x))=u(gg',x).
+  \]
+\end{itemize}
+\end{definition}
+
+\begin{remark}
+On définit de même une action à droite par la propriété $A(g,A(g',x))=A(g'g,x)$.
+\end{remark}
+
+\begin{proposition}
+l'action naturelle du groupe $SO(n)$ sur $\mathbb{R}^n$ est donnée par la multiplication matricielle:
+\[
+\begin{aligned}
+u\colon SO(n)\times \mathbb{R}^n&\longrightarrow \mathbb{R}^n\\
+(R,x)&\longmapsto Rx
+\end{aligned}
+\]
+\end{proposition}
+
+\begin{proof}
+Soient $R,R'\in SO(n)$ et $x\in \mathbb{R}^n$,
+\[
+u(I_n,x)=I_{n}x=x.
+\]
+Et
+\[
+u(R,u(R',x))=u(R,R'x)=RR'x=u(RR',x).
+\]
+La multiplication matricielle \underline{$u$ est une action de groupe}.
+\end{proof}
+
+\begin{proposition}
+L'action du groupe $SO(n)$ dans $\mathbb{R}^n$ est fidèle mais pas libre et pas transitive.
+\end{proposition}
+
+\begin{proof}
+L'action de $SO(n)$ dans $\mathbb{R}^n$ est \textbf{fidèle}:\\
+Si l'action est fidèle, alors si $R\in SO(n)$ tel que $u(R,x)=x, \forall x\in \mathbb{R}^n$ alors $R=I_n$.\\
+Supposons que $R\in SO(n)$ vérifie $Rx=x$ pour tout $x\in \mathbb{R}^n$. Alors, pour tout vecteur de la base canonique de $\mathbb{R}^n$: $(e_1,\dots,e_n)$, on a
+\[
+Re_i = e_i \quad \forall~1\leq i\leq n.
+\]
+Ainsi, les colonnes de $R$ sont celles de l'identité, donc $R=I_n$.~\underline{L'action est fidèle}.\\
+
+L'action de $SO(n)$ dans $\mathbb{R}^n$ n'est \textbf{pas libre}:\\
+Si l'action est libre, alors $\forall x\in \mathbb{R}^n$, si $x\neq 0$ et $R\neq I_n$ alors $Rx\neq x$.\\
+Prenons $R=\begin{pmatrix} 1 & 0 \\ 0 & S \end{pmatrix}$ une matrice par bloc de $SO(n)$ où $S\in SO(n-1)$ différente de l'identité et $x=(1,0,\dots ,0)$.\\
+Alors $u(R,x)=Rx=x$ car $x$ est dans la direction de la première colonne de $R$.\\
+Donc \underline{l'action de $SO(n)$ dans $\mathbb{R}^n$ n'est pas libre}.\\
+
+L'action de $SO(n)$ dans $\mathbb{R}^n$ n'est \textbf{pas transitive}:\\
+Si l'action est transitive, alors $\forall x,y\in \mathbb{R}^n, \exists R\in SO(n)$ tel que $u(R,x)=y$.\\
+Prenons $x=0$ et $y=(1,0,\dots ,0)$.\\
+Alors $\forall R\in SO(n)$, $u(R,x)=Rx=R\cdot 0=0\neq y$.\\
+Donc \underline{l'action de $SO(n)$ dans $\mathbb{R}^n$ n'est pas transitive}.
+\end{proof}
+
+\begin{proposition}
+L'action de $SO(n)$ sur $\mathbb{R}^n$ est isométrique. C'est-à-dire:
+\[
+\forall x,y\in \mathbb{R}^n, \forall R\in SO(n), \left\langle Rx,Ry\right\rangle=\left\langle x,y\right\rangle.
+\]
+\end{proposition}
+
+\begin{proof}
+Soient $x,y\in \mathbb{R}^n$ et $R\in SO(n)$\\
+\[
+\left\langle Rx,Ry\right\rangle=\left\langle x,R^{T}Ry\right\rangle.
+\]
+Or $R^{T}R=I_n$ car $R\in SO(n)$, donc
+\[
+\begin{aligned}
+\left\langle Rx,Ry\right\rangle&=\left\langle x,I_{n}y\right\rangle\\
+&=\left\langle x,y\right\rangle.
+\end{aligned}
+\]
+\underline{L'action de $SO(n)$ sur $\mathbb{R}^n$ est isométrique}, elle préserve bien la distance.
+\end{proof}
+
+\begin{definition}[Orbite d'une action]\leavevmode\\
+On appelle \textbf{orbite de x} la partie de l'ensemble $X$ définie par
+\[
+Orb(x)=\{u(g,x)~|~g\in G\}.
+\]
+\end{definition}
+
+\begin{remark}
+Les orbites de l'action naturelle de $SO(n)$ sur $\mathbb{R}^n$ sont exactement les sphères centrées en l'origine (ainsi que le singleton $\{0\}$).
+\end{remark}
+
+
+\subsection{Propriétés topologiques de $SO(n)$}
+
+\begin{theorem}[Compacité en dimension finie]\label{thm:compact-dim-finie}\leavevmode\\
+Soient $(X,\|~\|)$ un espace vectoriel normé de dimension finie et $E\subset X$ une partie de $X$. Alors $E$ est compacte si et seulement si $E$ est fermée et bornée. 
+\end{theorem}
+
+\begin{proof}
+$\Rightarrow$ Une partie compacte est aussi fermée et bornée. Cette implication est donc vraie dans n'importe quel espace et n'a rien à voir avec le cadre de la dimension finie!
+
+$\Leftarrow$ C'est une conséquence du Théorème de Bolzano-Weierstrass.
+\end{proof}
+
+\begin{proposition}\label{prop:SO-compact}
+$SO(n)$ est un groupe compact.
+\end{proposition}
+
+\begin{proof}
+On a $SO(n)\subset \mathcal{M}_n(\mathbb{R})$ qui est en dimension finie.\\
+Montrons que $SO(n)$ est fermé (1) et borné (2):
+
+(1) $SO(n)$ \textbf{fermé}.\\
+Soient $f$ et $g$ deux applications continues.
+\[
+\begin{aligned}
+f \colon \mathcal{M}_n(\mathbb{R}) &\longrightarrow \mathbb{R}~&g \colon \mathcal{M}_n(\mathbb{R}) &\longrightarrow \mathcal{M}_n(\mathbb{R})\\
+X &\longmapsto \det(X)&X &\longmapsto X^{T}X
+\end{aligned}
+\]
+On pose $\{1\}\subset\mathbb{R}$ et $\{Id\}\subset\mathcal{M}_n(\mathbb{R})$, deux fermés (car ce sont des singletons).\\
+Alors $SO(n)=f^{-1}(\{1\})\cap g^{-1}(\{Id\})$, comme l'intersection de deux fermés (images réciproques de fermés par des applications continues).
+Ainsi \underline{$SO(n)$ est fermé}.\\
+
+(2) $SO(n)$ \textbf{borné}.\\
+Soit $A\in SO(n)$, alors $\|A\|_F^2=Tr(A^{T}A)=Tr(Id)=n$.\\
+On a donc: $\forall A\in SO(n), \exists M=\sqrt{n}$ tel que $\|A\|\leq M$ (toutes les normes sont équivalentes en dimension finie).\\
+On retrouve que \underline{$SO(n)$ est borné} car $SO(n)\subset B(0,M)$.\\
+
+Finalement, $SO(n)$ fermé et borné donc (par le \textit{Théorème de compacité en dimension finie~\ref{thm:compact-dim-finie}}) \underline{$SO(n)$ est compact}.
+\end{proof}
+
+\begin{proposition}\label{prop:SO-connexe-arcs}
+$SO(n)$ est un groupe connexe par arcs.
+\end{proposition}
+
+\begin{proof}
+On procède par récurrence sur $n \ge 1$ en utilisant l'action naturelle de $SO(n)$ sur la sphère $S^{n-1}\in \mathbb{R}^n$.
+\[
+\begin{aligned}
+u\colon SO(n)\times S^{n-1} &\longrightarrow S^{n-1}\\
+(A,x) &\longmapsto Ax
+\end{aligned}
+\]
+Pour $n = 1$, le groupe $SO(1) = \{1\}$ est un singleton, il est donc trivialement connexe par arcs.\\\\
+Vérifions que le fixateur du vecteur $e_n ={(0,\dots,0,1)}^T$ s'identifie à $SO(n-1)$.\\
+Une matrice $A \in SO(n)$ vérifie $Ae_n = e_n$ si et seulement si sa dernière colonne est $e_n$. Étant orthogonale, ses lignes et colonnes forment des familles orthonormées, ce qui impose à $A$ d'avoir une structure de bloc de la forme:
+\[
+A = \begin{pmatrix} B & 0 \\ 0 & 1 \end{pmatrix}
+\]
+où $B \in \text{M}_{n-1}(\mathbb{R})$. Les conditions $A^{T}A=I_n$ et $\det(A)=1$ sont aussi vérifiées sur le bloc $B$.\\
+Donc, $B \in SO(n-1)$. L'application $B \mapsto \begin{pmatrix} B & 0 \\ 0 & 1 \end{pmatrix}$ définit un isomorphisme qui permet d'identifier le fixateur de $e_n$ à $SO(n-1)$.\\\\
+Montrons que l'application $SO(n)/SO(n-1)\longrightarrow S^{n-1}$ ainsi obtenue est un homéomorphisme.\\
+L'action de $SO(n)$ sur $S^{n-1}$ est transitive pour tout $n \ge 2$ (tout vecteur unitaire peut être complété en une base orthonormée). L'application associée à $e_n$ est donc surjective:
+\[
+\begin{aligned}
+\varphi \colon SO(n) &\longrightarrow S^{n-1}\\
+\quad A &\longmapsto Ae_n
+\end{aligned}
+\]
+Par passage au quotient, $\varphi$ induit une bijection continue:
+\[
+\varphi' \colon SO(n)/SO(n-1) \longrightarrow S^{n-1}
+\]
+Le groupe $SO(n)$ étant compact~(\ref{prop:SO-compact}), toute bijection continue d'un espace compact vers un espace séparé est un homéomorphisme.\\
+On en déduit que $SO(n)/SO(n-1) \simeq S^{n-1}$.\\\\
+Montrons que si $H$ est un sous-groupe fermé connexe de $G$, l'application quotient induit une bijection $\pi_0(G)\simeq \pi_0(G/H)$.\\
+En effet, soit $f \colon G \to \{0, 1\}$ une application continue. Pour tout $g \in G$, la restriction de $f$ à la classe $gH$ est continue. Comme $H$ est connexe, la fibre\footnote{En topologie, la fibre d'un point par une application désigne simplement sa préimage} $gH$ est connexe, donc $f$ est constante. Donc, $f$ passe au quotient en une application continue $\bar{f}$. Si $G/H$ est connexe, $\bar{f}$ est constante, impliquant que $f$ est constante sur $G$.\\
+$G$ est donc connexe.\\\\
+On en déduit la connexité de $SO(n)$ par récurrence.\\
+Supposons que $SO(n-1)$ est connexe. On applique l'égalité précédente à $G=SO(n)$ et $H=SO(n-1)$.\\
+Par hypothèse, $H$ est connexe. De plus, pour $n \ge 2$, l'espace quotient $SO(n)/SO(n-1) \simeq S^{n-1}$ est connexe.\\
+\underline{$SO(n)$ est donc connexe}.\\\\
+Et \underline{$SO(n)$ est connexe par arcs} car c'est une variété différentielle~(\ref{prop:SO-groupe-de-Lie}) localement connexe par arcs et compacte~(\ref{prop:SO-compact}).
+\end{proof}
+
+
+% Algèbre de Lie so(n)
+\section{L'algèbre de Lie $\mathfrak{so}(n)$}
+
+L'outil principal qui nous permettra d'étudier les groupes de Lie est leur algèbre de Lie. Définissons cette structure pour les rotations et intéressons-nous aux propriétés différentielles des groupes de Lie. Prenons $G$ un groupe de Lie et $e\in G$ son élément neutre.
+
+\begin{definition} [Algèbre de Lie]\leavevmode\\
+Une \textbf{algèbre de Lie}, notée $\mathfrak{g} = T_{e}G$, est un espace vectoriel muni d'un produit appelé commutateur (ou crochet de Lie), qui est une application bilinéaire antisymétrique~\cite{Hol24}
+\[
+[\cdot,\cdot] : \mathfrak{g} \times \mathfrak{g} \to \mathfrak{g}
+\]
+et qui satisfait l'identité de Jacobi:
+\[
+[\xi,[\eta, \zeta]] + [\eta,[\zeta, \xi]] + [\zeta,[\xi, \eta]] = 0, \quad \text{pour } (\xi,\eta,\zeta) \in \mathfrak{g}.
+\]
+\end{definition}
+
+\begin{definition} [Crochet de Lie dans $\mathfrak{so}(n)$]\leavevmode\\
+Le commutateur de $\mathfrak{so}(n)$ est, pour $A,B\in\mathfrak{so}(n)$:
+\[
+\begin{aligned}
+[\cdot,\cdot] : \mathfrak{g} \times \mathfrak{g} &\to \mathfrak{g}\\
+(A,B) &\mapsto  AB-BA
+\end{aligned}
+\]
+\end{definition}
+
+\begin{proposition}\label{prop:so(n)=o(n)}
+Les algèbres de Lie des groupes $SO(n)$ et $O(n)$ coïncident:
+\[
+\mathfrak{so}(n)=\mathfrak{o}(n)
+\]
+\end{proposition}
+
+\begin{proof}
+Montrons par double inclusion:
+
+$\mathfrak{so}(n)\subset \mathfrak{o}(n)$: Comme $SO(n)\subset O(n)$, tout vecteur tangent à $SO(n)$ en l'identité est aussi tangent à $O(n)$.
+\[
+T_{Id}SO(n)\subset T_{Id}O(n),~\text{donc}~\mathfrak{so}(n)\subset \mathfrak{o}(n).
+\]
+
+$\mathfrak{so}(n)\supset \mathfrak{o}(n)$: On utilise le fait que $SO(n)$ est la composante connexe de l'identité dans $O(n)$~(\ref{prop:SO-connexe-arcs}).\\
+Au voisinage de $Id$, les deux groupes coïncident. En effet, dans un voisinage de $Id$, le déterminant reste positif car il vaut $1$ en $Id$ et la fonction $\det$ est continue.\\
+Donc localement, toute courbe dans $O(n)$ issue de $Id$ reste dans $SO(n)$.\\
+Ainsi, tous les espaces tangents à $O(n)$ en $Id$ le sont aussi pour $SO(n)$, donc:
+\[
+T_{Id}O(n)\subset T_{Id}SO(n)
+\]
+
+Finalement, on a \underline{$\mathfrak{so}(n)=\mathfrak{o}(n)$}.
+\end{proof}
+
+\begin{proposition}
+$T_{Id}SO(n)=\{H\in \mathcal{M}_n(\mathbb{R})~|~H^{T}=-H\}$ est l'algèbre de Lie de $SO(n)$. Plus précisément: $\mathfrak{so}(n)=T_{Id}SO(n)$.
+\end{proposition}
+
+\begin{proof}
+$SO(n)$ est un groupe de Lie~(\ref{prop:SO-groupe-de-Lie}). L'algèbre de Lie d'un groupe de Lie est définie comme son espace tangent en l'identité (ici $Id$), que l'on trouve en différenciant $f$\footnote{En effet, on peut ignorer la condition sur le déterminant car on a déjà montré que les algèbres de Lie de $SO(n)$ et $O(n)$ coïncident~(\ref{prop:so(n)=o(n)})} en l'identité avec
+\[
+\begin{aligned}
+f \colon \mathcal{M}_n(\mathbb{R}) &\longrightarrow \mathcal{S}_n(\mathbb{R})\\
+X &\longmapsto X^{T}X
+\end{aligned}
+\]
+Par la preuve de la \textit{proposition~(\ref{prop:SO-groupe-de-Lie})}, on a
+\[
+Df(X)H=X^{T}H+H^{T}X.
+\]
+On l'évalue en l'identité
+\[
+Df(Id)H=I_n^{T}H+H^{T}I_n=H+H^T.
+\]
+Enfin,
+\[
+T_{Id}SO(n)=\ker(Df(Id))=\{H\in\mathcal{M}_n(\mathbb{R})~|~H^T=-H\}
+\]
+Par définition, l'algèbre de Lie de $SO(n)$ est l'espace tangent en l'identité.\\
+Ainsi, l'algèbre de Lie du groupe des rotations de dimension $n$ est l'ensemble des matrices antisymétriques.
+\[
+\mathfrak{so}(n)=\{H\in\mathcal{M}_n(\mathbb{R})~|~H^T=-H\}
+\]
+\end{proof}
+
+\begin{proposition}
+Si $A,B\in \mathfrak{so}(n)$, Alors $[A,B]\in\mathfrak{so}(n)$
+\end{proposition}
+
+\begin{proof}
+Soient $A,B\in \mathfrak{so}(n)$, calculons la transposée de $[A,B]$
+\[
+\begin{aligned}
+{[A,B]}^{T}&={(AB-BA)}^T\\
+&={(AB)}^{T}-{(BA)}^{T}\\
+&=B^{T}A^T-A^{T}B^T.
+\end{aligned}
+\]
+On utilise l'antisymétrie de $A$ et $B$
+\[
+\begin{aligned}
+{[A,B]}^{T}&=(-B)(-A)-(-A)(-B)\\
+&=-(AB-BA)=-[A,B]
+\end{aligned}
+\]
+On a bien $[A,B]$ antisymétrique, donc \underline{$[A,B]\in\mathfrak{so}(n)$}.
+\end{proof}
+
+\begin{definition}[Translation à droite]\label{def:translation}\leavevmode\\
+Soit $g\in G$. On note \textbf{translation à droite} l'application:
+\[
+\begin{aligned}
+R_g\colon G &\longrightarrow G\\
+h&\longmapsto hg
+\end{aligned}
+\]
+\end{definition}
+
+\begin{proposition}\label{prop:translation-lisse}
+La translation à droite sur le groupe $SO(n)$ est une application lisse.
+\end{proposition}
+
+\begin{proof}
+Soit $R_M$ une translation à droite sur $SO(n)$. On peut définir cette translation comme:
+\[
+\begin{aligned}
+R_M\colon SO(n) &\longrightarrow SO(n)\\
+X&\longmapsto u\times v=XM
+\end{aligned}
+\]
+avec $u$ l'application identité et $v$ une application constante sur $SO(n)$. Par produit d'applications lisses (avec le produit matriciel), on a que \underline{$R_M$ est une application lisse} sur $SO(n)$.
+\end{proof}
+
+\begin{proposition}\label{prop:Tangent-isomorphe}
+L'espace $T_{A}SO(n)$ est isomorphe à $T_{Id}SO(n)$ pour tout $A\in SO(n)$
+\end{proposition}
+
+\begin{proof}
+Soit $A \in SO(n)$. On considère la translation à droite~(\ref{def:translation}) sur $SO(n)$ définie par
+\[
+\begin{aligned}
+R_A : SO(n) &\longrightarrow SO(n)\\
+X &\longmapsto XA
+\end{aligned}
+\]
+Cette application est lisse~(\ref{prop:translation-lisse}), et son inverse est $R_{A^{-1}}$. Ainsi, $R_A$ est un difféomorphisme de $SO(n)$.\\
+En particulier, sa différentielle en tout point est un isomorphisme linéaire. En évaluant en l'identité, on obtient
+\[
+T_{Id}R_A : T_{Id}SO(n) \longrightarrow T_A SO(n),
+\]
+qui est un isomorphisme.
+Son inverse est donné par
+\[
+T_A R_{A^{-1}} : T_A SO(n) \longrightarrow T_{Id}SO(n),
+\]
+et par théorème de dérivation des fonctions composées, on a
+\[
+T_A R_{A^{-1}} \circ T_{Id}R_A=T_{Id}(R_{A^{-1}} \circ R_A)=\mathrm{Id}_{T_{Id}SO(n)}.
+\]
+On en déduit que $T_A SO(n)$ et $T_{Id}SO(n)$ sont isomorphes.
+\end{proof}
+
+\begin{remark}
+La translation à droite permet de ``passer''\footnote{Passer: transporter de manière isomorphe les structures} d'un espace tangent à un autre, reliant l'espace tangent en un point quelconque et l'espace tangent à l'identité~(\ref{prop:Tangent-isomorphe}).
+\end{remark}
+
+
+% Exponentielle
+\section{L'application exponentielle}
+
+\begin{definition} [Exponentielle de matrice]\leavevmode\\
+Soit $A\in \mathcal{M}_n(\mathbb{K})$ avec $\mathbb{K}=\mathbb{R}$ ou $\mathbb{C}$.  On appelle exponentielle de la matrice $A$, notée $e^A$, la somme de la série:
+\[
+e^{A}=\sum_{k=0}^{\infty}\frac{A^k}{k!}~,\qquad A^0=I_n~,\qquad \exp(0)=I_n.
+\]
+\end{definition}
+
+\begin{proposition}\label{prop:ensemble-exp}
+Si $A\in\mathfrak{so}(n)$, Alors $e^A\in SO(n)$.
+\end{proposition}
+
+\begin{proof}
+Montrons que $\det(e^A)=1$ et ${(e^A)}^{T}e^A=I_n$, et donc que $e^A\in SO(n)$.\\
+Soit $A\in \mathfrak{so}(n)$, $A$ est une matrice antisymétrique.\\
+On sait que pour tout $M\in \mathcal{M}_n(\mathbb{R})$
+\[
+\det(e^M)=e^{Tr(M)}.
+\]
+Par antisymétrie de $A$, $Tr(A)=0$.\\
+Et donc
+\[
+\det(e^A)=e^{Tr(A)}=e^0=1.
+\]
+Maintenant, montrons que ${(e^A)}^{T}e^A=I_n$.\\
+Pour la même matrice $A$,
+\[
+\begin{aligned}
+{(e^A)}^T&={\left( \sum_{n=0}^{\infty}\frac{A^n}{n!}\right)}^T=\sum_{n=0}^{\infty}\frac{{(A^n)}^T}{n!}\\
+&=\sum_{n=0}^{\infty}\frac{{({A}^T)}^n}{n!}=e^{(A^T)}.
+\end{aligned}
+\]
+Or $A^T=-A$,
+\[
+{(e^A)}^T(e^A)=(e^{-A})(e^A)=e^0=I_n.
+\]
+Ainsi, $e^A$ vérifie $\det(e^A)=1$ et ${(e^A)}^{T}e^A=I_n$.\\
+On a bien \underline{$e^A\in SO(n)$}.
+\end{proof}
+
+\begin{exemple}
+Exemple d'exponentielle d'une matrice $2\times 2$ antisymétrique:\\
+Soient $\theta\in\mathbb{R}$ et $A=\begin{pmatrix}0 & -\theta\\\theta & 0\end{pmatrix}\in\mathfrak{so}(2)$. Calculons $e^{A}$:\\
+On observe que
+\[
+A^{2}=\begin{pmatrix} -\theta^{2} & 0 \\ 0 & -\theta^{2} \end{pmatrix} = -\theta^{2} I_{2},
+\]
+et par récurrence,
+\[
+A^{2k}={(-1)}^{k}\theta^{2k} I_{2},\qquad A^{2k+1}={(-1)}^{k}\theta^{2k+1} \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}.
+\]
+Alors
+\[
+\begin{aligned}
+e^{A} &= \sum_{k=0}^{\infty} \frac{A^{k}}{k!}= \sum_{k=0}^{\infty} \frac{A^{2k}}{(2k)!} + \sum_{k=0}^{\infty} \frac{A^{2k+1}}{(2k+1)!}\\
+&= \left( \sum_{k=0}^{\infty} \frac{{(-1)}^{k}\theta^{2k}}{(2k)!} \right) I_{2}\;+\; \left( \sum_{k=0}^{\infty} \frac{{(-1)}^{k}\theta^{2k+1}}{(2k+1)!} \right)\begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}.
+\end{aligned}
+\]
+On reconnaît les séries du cosinus et du sinus:
+\[
+\cos\theta=\sum_{k=0}^{\infty} \frac{{(-1)}^{k}\theta^{2k}}{(2k)!},\qquad\sin\theta=\sum_{k=0}^{\infty} \frac{{(-1)}^{k}\theta^{2k+1}}{(2k+1)!}.
+\]
+Ainsi,
+\[
+e^{A}=\cos\theta\;I_{2}+\sin\theta \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}=\begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix},
+\]
+qui est bien une matrice de rotation, donc $e^A\in SO(2)$.
+\end{exemple}
+
+\begin{proposition}
+L'application exponentielle $\exp \colon \mathfrak{so}(n)\longrightarrow SO(n)$ est surjective.
+\end{proposition}
+
+\begin{proof}
+Soit $R\in SO(n)$. Par le théorème spectral, il existe une base orthonormée dans laquelle la matrice de $R$ est diagonale par blocs, les blocs diagonaux étant soit des blocs de rotation:
+\[
+R(\theta_k)=\begin{pmatrix}\cos\theta_k & -\sin\theta_k\\\sin\theta_k & \cos\theta_k\end{pmatrix},
+\]
+soit des blocs $(1)$ et $(-1)$.\\
+Comme $\det R=1$, les valeurs propres $(-1)$ apparaissent en nombre pair; on les regroupe donc deux à deux pour former des blocs
+\[
+-I_2=R(\pi).
+\]
+On obtient ainsi une décomposition
+\[
+R=P\,\mathrm{diag}\bigl(R(\theta_1),\ldots,R(\theta_r),1,\ldots,1\bigr)P^{-1},
+\]
+où $P$ est orthogonale.\\
+Pour chaque bloc de rotation d'angle $\theta_k$, on construit explicitement
+\[
+A_k=\begin{pmatrix}0 & -\theta_k\\\theta_k & 0\end{pmatrix}\in \mathfrak{so}(2),
+\]
+de sorte que
+\[
+e^{A_k}=R(\theta_k).
+\]
+On pose alors
+\[
+A=P\,\mathrm{diag}(A_1,\ldots,A_r,0,\ldots,0)\,P^{-1}.
+\]
+Comme $\mathfrak{so}(n)$ est stable par conjugaison orthogonale, on a $A\in\mathfrak{so}(n)$.\\
+Finalement,
+\[
+e^A=P\,\mathrm{diag}\bigl(e^{A_1},\ldots,e^{A_r},1,\ldots,1\bigr)P^{-1}=R.
+\]
+Ainsi, on retrouve que $e^A=R$, et donc que pour tout $R\in SO(n)$, il existe $A\in\mathfrak{so}(n)$ tel que $e^A=R$.~\underline{L'exponentielle est surjective} de l'algèbre de Lie de $SO(n)$ dans son groupe de Lie.
+\end{proof}
+
+
+% -= Equa diff =-
+\chapter{Étude de l'équation différentielle linéaire $\dot{x}(t)=Ax(t)$}
+
+Dans ce chapitre, nous verrons comment cette équation différentielle linéaire apparait naturellement sur le groupe spécial orthogonal $SO(n)$, l'importance de ce résultat, ainsi que sa résolution. Commençons avec le groupe de Lie $SO(n)$.
+
+\begin{exemple}
+La translation à droite sur le groupe de Lie $SO(n)$ permet, comme on l'a vu, de ``passer'' d'un espace tangent à un autre de manière isomorphe.\\
+La figure ci-dessous \texttt{Figure~(\ref{fig:espaces-tangents})} illustre ce principe sur la surface $z=x^2-y^2$ (qui joue ici le rôle d'une variété différentielle). Le long de la courbe $y=1$, on a représenté les plans tangents ${T}_{g_0}G$ et ${T}_{g_t}G$ en $g_0=(-2,1,3)$ et $g_t=(0,1,-1)$, ainsi que les vecteurs tangents correspondants. Le passage de l'un à l'autre peut être réalisé par une translation à droite convenable.
+\end{exemple}
+
+\begin{comment}
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}
+  \begin{axis}[
+      view={120}{30},
+      xlabel=$x$, ylabel=$y$, zlabel=$z$,
+      colormap/viridis,
+      grid=major,
+      clip=false,
+  ]
+  % Surface principale
+  \addplot3[
+      surf,
+      shader=interp,
+      samples=40,
+      domain=-2:2,
+      domain y=-2:2,
+      opacity=0.8
+  ]
+  {x^2 - y^2};
+  % Plan tangent en g_0
+  \addplot3[
+      surf,
+      faceted color=blue,
+      fill opacity=0.3,
+      draw opacity=0.2,
+      samples=15,
+      domain=-2.5:-1.5,
+      domain y=0.5:1.5
+  ]
+  {-4*x -2*y -3};
+  % Plan tangent en g_t
+  \addplot3[
+      surf,
+      faceted color=blue,
+      fill opacity=0.3,
+      draw opacity=0.2,
+      samples=15,
+      domain=-0.8:0.8,
+      domain y=0.5:1.5
+  ]
+  {-2*y +1};
+  % Courbe sur la surface (y=1)
+  \addplot3[
+      color=red,
+      thick,
+      domain=-2:2,
+      samples=50,
+      samples y=0,
+  ]
+  ({x}, 1, {x^2 - 1});
+  % Points g_0, g_t, g_1
+  \addplot3[only marks, mark=*, mark size=2.5, color=red] coordinates {
+      (-2,1,3)  % g_0
+      (0,1,-1)  % g_t
+      (2,1,3)   % g_1
+  };
+  % Étiquettes des points
+  \node[anchor=south west] at (axis cs:-2,1,3) {$\mathbf{g}_0$};
+  \node[anchor=north]      at (axis cs:0,1,-1) {$\mathbf{g}_t$};
+  \node[anchor=south east] at (axis cs:2,1,3) {$\mathbf{g}_1$};
+  % Vecteur tangent en g_0
+  \draw[->, thick, blue] (axis cs:-2,1,3) -- (axis cs:-1.75,1,2);
+  \node[anchor=south east, blue] at (axis cs:-1.75,1,2) {$\mathbf{T}_{g_0}G$};
+  % Vecteur tangent en g_t
+  \draw[->, thick, blue] (axis cs:0,1,-1) -- (axis cs:0.5,1,-1);
+  \node[anchor=south, blue] at (axis cs:0.5,1,0) {$\mathbf{T}_{g_t}G$};
+  \end{axis}
+  \end{tikzpicture}
+  \caption{Figure des plans tangents à une surface en $g_0$ et $g_t$.}\label{fig:espaces-tangents}
+\end{figure}
+\end{comment}
+
+\section{Obtenir l'équation différentielle $\dot{x}(t)=Ax(t)$}
+
+Cherchons à exprimer la différentielle de la translation à droite afin de lier le groupe $SO(n)$ à son algèbre de Lie. Remarquons une égalité que l'on utilisera juste après.
+\begin{remark}\label{rq:id}
+On sait que $\forall A\in SO(n)\colon AA^{-1}=I_n$.
+\end{remark}
+\subsubsection{Trouvons l'équation.}
+Prenons la translation à droite sur $SO(n)$ avec $M\in SO(n)$:
+\[
+\begin{aligned}
+R_M\colon SO(n) &\longrightarrow SO(n)\\
+X&\longmapsto XM
+\end{aligned}
+\]
+Différencions cette application, soient $X\in SO(n)$ et $A\in \mathcal{M}_n(\mathbb{R})$
+\[
+\begin{aligned}
+R_M(X+A)&=(X+A)M\\
+&=XM+AM\\
+&=R_M(X)+DR_M(X)A+o(\|A\|)
+\end{aligned}
+\]
+La différentielle de $R_M$ en $X$ est donc donnée par la partie linéaire en $A$,
+\[
+\begin{aligned}
+DR_M(A)\colon T_{A}SO(n) &\longrightarrow T_{AM}SO(n)\\
+X&\longmapsto AM
+\end{aligned}
+\]
+Car
+\[
+DR_M\colon SO(n) \longrightarrow \mathcal{L}(T_{A}SO(n),T_{AM}SO(n))
+\]
+est à valeurs dans les applications linéaires d'un espace tangent dans un autre, qui sont isométriques~(\ref{prop:Tangent-isomorphe}).\\
+Considérons maintenant une courbe différentiable $x(t) \in SO(n)$,
+\[
+x(t)=M_{t}x_0
+\]
+que l'on différencie par rapport au temps,
+\[
+\dot{x}(t)=\dot{M}_{t}x_0.
+\]
+Or
+\[
+\dot{M}_t=A(t)M_t.
+\]
+Et en posant $A(t) = \dot{x}(t){x(t)}^{-1}$, on remarque~(\ref{rq:id}) que $A(t) \in T_{I_n}SO(n) = \mathfrak{so}(n)$ (l'algèbre de Lie des matrices antisymétriques).\\
+Donc si on suppose que ce vecteur est constant en fonction du temps $A(t)=A$,
+\[
+\begin{aligned}
+\dot{x}(t)&=AM_{t}x_0\\
+\dot{x}(t)&=Ax(t)
+\end{aligned}
+\]
+
+\begin{remark}
+La solution de l'équation différentielle linéaire ci-dessus permet, à partir d'un seul élément $A$ de l'algèbre de Lie $\mathfrak{so}(n)$, de créer un mouvement sur tout le groupe $SO(n)$ a partir d'applications de translations à droite.
+\end{remark}
+
+\section{Solution de $\dot{x}(t)=Ax(t)$}
+
+Pour garantir l'existence et l'unicité des trajectoires sur le groupe, revenons au cas général avec le théorème suivant.
+
+\begin{theorem} [Théorème de Cauchy-Lipschitz]\label{thm:Cauchy-Lipschitz}\leavevmode\\
+Soient $\Omega$ un ouvert de $\mathbb{R} \times \mathbb{R}^d$ et $F\colon \Omega \longrightarrow\mathbb{R}^d$. Supposons que:
+\begin{itemize}
+  \item $F$ est continue sur $\Omega$.
+  \item $F$ est localement Lipschitzienne par rapport à $x$.
+\end{itemize}
+Alors, pour tout $(t_0,x_0)\in\Omega$, le problème de Cauchy:
+\[
+(E)\left\{\begin{array}{ll}
+Z'(t)=F(t,Z(t))\\
+Z(t_0)=x_0
+\end{array}\right.
+\]
+admet une unique solution maximale $(J,x)$.
+\end{theorem}
+
+\begin{proof}
+Admis
+\end{proof}
+
+\begin{proposition}\label{prop:solution-equadiff}
+La solution de l'équation différentielle linéaire $\dot{x}(t)=Ax(t)$ est:
+\[
+x(t)=e^{tA}x_0
+\]
+\end{proposition}
+
+\begin{proof}
+Dans notre cas, en associant $\mathbb{R}^d$ à $\mathcal{M}_n(\mathbb{R})$, l'application $F(t,X) = AX$ est linéaire par rapport à $X$, donc globalement lipschitzienne.\\
+Le \textit{Théorème de Cauchy-Lipschitz~\ref{thm:Cauchy-Lipschitz}} s'applique et assure l'existence d'une unique solution maximale définie sur $\mathbb{R}$ tout entier, dont la forme explicite fait intervenir l'exponentielle de matrice.\\
+Vérifions que notre unique solution est $x(t)=e^{tA}x_0$:\\
+$x$ étant lisse, on peut écrire:
+\[
+\begin{aligned}
+x(t)&=e^{tA}x_0\\
+\dot{x}(t)&=\dot{(e^{tA})}x_0
+\end{aligned}
+\]
+On dérive en fonction de $t$.
+\[
+\begin{aligned}
+&= Ae^{tA}x_0\\
+\dot{x}(t)&=Ax(t)
+\end{aligned}
+\]
+Avec
+\[
+x(0)=I_{n}x_0=x_0
+\]
+Ainsi, l'unique solution de l'équation différentielle est \underline{$x(t)=e^{tA}x_0$}.
+\end{proof}
+
+
+% -= Cas particuliers de SO(2) et SO(3) =-
+\chapter{Cas particuliers de $SO(2)$ et $SO(3)$}\label{chap:SO2-SO3}
+
+Dans ce chapitre, nous sortirons un peu de la théorie en nous intéressant à des cas simples: les groupes de rotations $SO(2)$ et $SO(3)$.\\
+Ces deux groupes vont nous donner un aperçu plus concret du cadre \textit{LDDMM}\@.
+
+\section{$SO(2)$, Les rotations en dimension 2}
+
+Le groupe $SO(2)$ est très simple, il décrit les rotations du plan autour de l'origine en dimension 2.
+
+\begin{proposition}\label{prop:forme-SO(2)}
+Soit $R$ une matrice de $SO(2)$, alors il existe $\theta\in\mathbb{R}$ tel que
+\[
+R=\begin{pmatrix}\cos\theta &-\sin\theta \\\sin\theta &\cos\theta\end{pmatrix}
+\]
+\end{proposition}
+
+\begin{proof}
+Soit
+\[
+R=\begin{pmatrix}a & b\\c & d\end{pmatrix}\in SO(2).
+\]
+Comme $R^{T}R=I_2$, les colonnes de $R$ forment une base orthonormée de $\mathbb{R}^2$. On a donc
+\[
+a^2+c^2=1.
+\]
+Il existe alors $\theta\in\mathbb{R}$ tel que
+\[
+a=\cos\theta,\qquad c=\sin\theta.
+\]
+La seconde colonne doit être un vecteur unitaire orthogonal à ${(a,c)}^T$. Elle est égale à
+\[
+{(-\sin\theta,\cos\theta)}^T,
+\]
+ou à
+\[
+{(\sin\theta,-\cos\theta)}^T.
+\]
+Or $\det(R)=1$, ce qui élimine la seconde possibilité. Ainsi
+\[
+b=-\sin\theta,\qquad d=\cos\theta.
+\]
+Ainsi,
+\[
+R=\begin{pmatrix}\cos\theta & -\sin\theta\\\sin\theta & \cos\theta\end{pmatrix}.
+\]
+\end{proof}
+
+\subsubsection{Étudions l'équation $\dot{R}(t)=AR(t)$ dans $SO(2)$.}
+L'inconnue est une rotation que l'on va nommé ici $R$. On remarque que $A\in \mathfrak{so}(2)$ pour que la solution appartienne à $SO(2)$.\\
+Alors on peut écrire $A$ sous la forme
+\[
+A=\begin{pmatrix}0 &-\omega \\\omega &0\end{pmatrix}, \text{ avec } \omega\in\mathbb{R}. 
+\]
+On a vu que la solution d'un équation différentielle linéaire de ce type est $e^{tA}x_0$~(\ref{prop:solution-equadiff}). Dans notre cas, on a donc
+\[
+R(t)=e^{tA}R_0.
+\]
+Or l'exponentielle d'une matrice de $\mathfrak{so}(n)$ est à valeur dans $SO(n)$~(\ref{prop:ensemble-exp}).\\
+Sachant que $tA\in\mathfrak{so}(2)$, donc $e^{tA}\in SO(2)$ et $e^{tA}$ peut s'écrire~(\ref{prop:forme-SO(2)}) comme
+\[
+e^{tA}=\begin{pmatrix}\cos\theta &-\sin\theta \\\sin\theta &\cos\theta\end{pmatrix},\text{ avec }\theta\in\mathbb{R}\text{ dépendant de }t.
+\]
+Après résolution, on trouve
+\[
+e^{tA}=\begin{pmatrix}\cos(\omega t) &-\sin(\omega t) \\\sin(\omega t) &\cos(\omega t)\end{pmatrix}.
+\]
+Par conséquent,
+\[
+R(t)=\begin{pmatrix}\cos(\omega t) & -\sin(\omega t) \\\sin(\omega t) & \cos(\omega t)\end{pmatrix}R_0.
+\]
+Comme toute matrice de $SO(2)$ est une rotation, il existe $\theta_0\in\mathbb{R}$ tel que
+\[
+R_0=\begin{pmatrix}\cos\theta_0 & -\sin\theta_0 \\\sin\theta_0 & \cos\theta_0\end{pmatrix}.
+\]
+On obtient alors
+\[
+R(t)=\begin{pmatrix}\cos(\omega t) & -\sin(\omega t) \\\sin(\omega t) & \cos(\omega t)\end{pmatrix}\begin{pmatrix}\cos(\theta_0) & -\sin(\theta_0) \\\sin(\theta_0) & \cos(\theta_0)\end{pmatrix}.
+\]
+En effectuant le produit matriciel et en utilisant les formules d'addition du sinus et du cosinus, on trouve
+\[
+R(t)=\begin{pmatrix}\cos(\theta_0+\omega t) & -\sin(\theta_0+\omega t) \\\sin(\theta_0+\omega t) & \cos(\theta_0+\omega t)\end{pmatrix}.~(*)
+\]
+Ainsi, la solution est une rotation dont l'angle évolue linéairement avec le temps.
+
+\subsubsection{Application au modèle de recalage.}
+
+Soit $x_S$ notre forme source et $x_T$ notre forme cible. Rappelons notre équation de minimisation dans le cas général~\cite{Pol18} pour $I_0$ la forme source et $I_1$ la forme cible:
+\[
+\begin{aligned}
+\min_{v\in L^2([0,1],V)}~&J(v)=\frac{1}{2}\int_{0}^{1}\|v_t\|_{V}^2\,dt+\|I_0\circ\varphi_1^{-1}-I_1\|\\
+&\text{tel que }\left\{\begin{array}{ll}\dot{\varphi}_t=v_t\circ\varphi_t\\\varphi_0=Id\end{array}\right.
+\end{aligned}
+\]
+Dans $SO(2)$, l'espace des transformations est réduit aux rotations du plan. On cherche la meilleure rotation, que l'on peut noter $x_1$, vérifiant
+\[
+\left\{\begin{array}{ll}\dot{x}(t)=A_{t}x(t)\\x_0=x_S\end{array}\right.
+\]
+Alors, on résoud l'équation différentielle ci-dessus en utilisant la solution $(*)$
+\[
+x(t)=R(t)x_S.
+\]
+On obtient ainsi une description explicite de l'évolution de la forme source sous l'action d'une rotation. Le résultat $x_1$ apparait quand la rotation est totalement appliquée à notre forme source.\\
+Maintenant, regardons l'énergie cinétique dans le cas des rotations de dimension 2. Avec le produit matricielle en loi de composition, on retrouve naturellement
+\[
+v_t=A_t,~A\in\mathfrak{so}(n).
+\]
+Ainsi, notre minimisation ressemble maintenant à ça (où $Skew_2$ désigne l'espace des matrices antisymétriques.):
+\[
+\begin{aligned}
+\min_{A\in L^2([0,1],Skew_2)}&~\frac{1}{2}\int_{0}^{1}\|A_t\|_{Skew_2}^2\,dt+\|x_1-x_T\|\\
+&\text{tel que }\left\{\begin{array}{ll}\dot{x}(t)=A_{t}x(t)\\x_0=x_S\end{array}\right.
+\end{aligned}
+\]
+Or $A$ étant antisymétrique, donc sous la forme $A_t=\begin{pmatrix}0 &-\omega_t\\ \omega_t &0\end{pmatrix}$ pour un certain $\omega_t\in\mathbb{R}$.\\
+On peut simplifier notre minimisation, et utiliser la valeur absolue au lieu d'un norme qui convient:
+\[
+\begin{aligned}
+\min_{\omega\in \mathbb{R}}&~\frac{1}{2}\int_{0}^{1}|\omega_t|^2\,dt+\|x_1-x_T\|\\
+&\text{tel que }\left\{\begin{array}{ll}\dot{x}(t)=A_{t}x(t)\\x_0=x_S\end{array}\right.
+\end{aligned}
+\]
+Si l'on cherche une géodésique\footnote{La rotation “la plus naturelle”, sans accélération, à vitesse angulaire constante}, on pose $\omega_t=\omega$ pour tout $t$. Le problème se réduit à l'optimisation d'un seul scalaire paramétrique $\omega\in\mathbb{R}$:
+\[
+\begin{aligned}
+\min_{\omega\in \mathbb{R}}&~J(\omega)=\frac{1}{2}|\omega|^2+\|x_1(\omega)-x_T\|\\
+&\text{tel que }\left\{\begin{array}{ll}\dot{x}(t)=A_{t}x(t)\\x_0=x_S\end{array}\right.
+\end{aligned}
+\]
+Autrement dit, dans le cas de $SO(2)$, le problème de recalage consiste à rechercher une vitesse d'angle\footnote{Vitesse d'angle ou vitesse angulaire: un angle qui dépend du temps $\omega_t$} optimale permettant de faire coïncider au mieux la forme source avec la forme cible tout en ``optimisant''\footnote{Optimiser: minimiser le coût énergétique} la rotation.
+
+%\section{$SO(3)$, Les rotations en dimension 3}
+
+%Le cas de la dimension $3$ introduit une géométrie plus complexe que celle en dimension $2$, notamment en raison de la \textit{non-commutativité} du groupe $SO(3)$.
+%étude de SO(3) : Exercice E.2. p30 cours3_groupe/algèbre-de-Lie (et Exemple p 29)
+
+
+% -= Algo =-
+\chapter{Implémentation algorithmique}
+
+Nous détaillons ici l'algorithme de résolution numérique pour les rotations, l'implémentation du code en Python, ainsi que l'analyse des résultats expérimentaux obtenus sur différentes formes tests.
+
+\section{Algorithme de résolution~- Discrétiser puis Optimiser}
+
+Pour résoudre ce problème numériquement, on utilise un algorithme itératif:
+
+\begin{itemize}
+  \item \textbf{Initialisation}: On choisit une vitesse angulaire de départ, par exemple
+  \[
+  \omega^{(0)} = 0.
+  \]
+  \item \textbf{Boucle d'optimisation} (pour chaque itération \(k\)):
+  \begin{enumerate}
+    \item \textit{Intégration du flot} (méthode d'Euler explicite):
+    On discrétise le temps physique \(t \in [0,1]\) en \(N\) sous-intervalles de pas \(\Delta t\). En partant de la position initiale \(x_{t=0}=x_S\), on intègre la dynamique pas à pas:
+    \[
+    x_{t+\Delta t}=x_t + \Delta t\, A\!\left(\omega^{(k)}\right)x_t.
+    \]
+    On obtient ainsi la position déformée finale \(x_{\text{finale}}\), correspondant à l'instant \(t=1\).
+    \item \textit{Évaluation de l'énergie}:
+    On calcule le coût global
+    \[
+    J\!\left(\omega^{(k)}\right).
+    \]
+    \item \textit{Mise à jour} (descente de gradient):
+    On calcule le gradient de l'énergie
+    \(\nabla J(\omega^{(k)})\)
+    et on actualise la vitesse angulaire avec un taux d'apprentissage \(\alpha\):
+    \[
+    \omega^{(k+1)}=\omega^{(k)}-\alpha \nabla J\!\left(\omega^{(k)}\right).
+    \]
+  \end{enumerate}
+\end{itemize}
+La descente de gradient peut être réalisée à l'aide de l'algorithme \texttt{L-BFGS} de PyTorch.
+
+\subsection{Recalage rigide sur $SO(2)$}
+
+On souhaite toujours minimiser le problème suivant:
+\[
+\begin{aligned}
+\min_{v\in L^2([0,1],V)}~&J(v)=\frac{1}{2}\int_{0}^{1}\|v_t\|_{V}^2\,dt+\|I_0\circ\varphi_1^{-1}-I_1\|\\
+&\text{tel que }\left\{\begin{array}{ll}\dot{\varphi}_t=v_t\circ\varphi_t\\\varphi_0=Id\end{array}\right.
+\end{aligned}
+\]
+On remplace le champ de vitesse LDDMM par un champ rigide
+\[
+\dot{x} = A(\omega)x,
+\]
+avec
+\[
+A(\omega)=\begin{pmatrix}0 & -\omega \\\omega & 0\end{pmatrix}\in \mathfrak{so}(2).
+\]
+Le paramètre \(\omega \in \mathbb{R}\) est la vitesse angulaire.
+
+On retrouve alors le problème présenté dans le chapitre~\textbf{\ref{chap:SO2-SO3}~Cas particuliers de \(SO(2)\) et \(SO(3)\)}, avec $x_S$ notre forme source et $x_T$ notre forme cible:
+\[
+\begin{aligned}
+\min_{\omega\in \mathbb{R}}&~J(\omega)=\frac{1}{2}|\omega|^2+\|x_1(\omega)-x_T\|\\
+&\text{tel que }\left\{\begin{array}{ll}\dot{x}=A(\omega)x\\x_{t=0}=x_S\end{array}\right.
+\end{aligned}
+\]
+
+\subsubsection{Méthode pour le recalage rigide sur $SO(2)$.}
+
+\textbf{Étape 1:}\textit{ Intégration du flot}\\
+La fonction \texttt{Euler~(\ref{code:Euler})} intègre le flot rigide par la méthode d'Euler explicite sur $t \in [0, 1]$.\\
+
+\textbf{Étape 2:}\textit{ Évaluation de l'énergie}\\
+La fonction \texttt{rotation\_loss~(\ref{code:rotation_loss})} calcule l'énergie totale $J(\omega) =\frac{1}{2}{|\omega|}^2+\|x_1(\omega)-x_T\|$.\\
+
+\textbf{Étape 3:}\textit{ Mise à jour (descente de gradient)}\\
+La fonction \texttt{opti\_rotation~(\ref{code:opti_rotation})} optimisation de la vitesse angulaire $\omega$ par descente de gradient.
+
+\begin{exemple}[Application de la méthode et calcul de la première itération]\label{ex:recalage-barre}\leavevmode\\
+On initialise le paramètre de rotation à:
+\[
+\omega^{(0)} = 0
+\]
+Cette valeur correspond à une rotation nulle. On évalue alors la fonction coût associée au recalage:
+\[
+J(\omega^{(0)}) = J(0) = 9.488581
+\]
+Cette valeur mesure l'écart entre la forme de référence et la forme transformée lorsque aucune rotation n'est appliquée. La valeur ici provient de l'exemple \texttt{Figure~(\ref{fig:RecalageRotationSO2})}.
+
+Calcul du gradient\\
+Le gradient de la fonction coût en \(\omega^{(0)}\) est:
+\[
+\nabla J(\omega^{(0)}) = 23.035329
+\]
+Ce gradient est positif, ce qui signifie que la fonction coût augmente lorsque \(\omega\) augmente localement.
+Pour diminuer la fonction coût, il faut donc se déplacer dans la direction opposée au gradient.
+
+Application de la descente de gradient\\
+La formule de mise à jour est:
+\[
+\omega^{(k+1)}=\omega^{(k)}-\alpha \nabla J(\omega^{(k)})
+\]
+avec:
+\[
+\alpha = 10^{-3}
+\]
+En remplaçant par les valeurs numériques:
+\[
+\omega^{(1)}=0-10^{-3}\times 23.035329
+\]
+On calcule d'abord le déplacement
+\[
+10^{-3}\times 23.035329=0.023035329
+\]
+Puis
+\[
+\omega^{(1)}=0 - 0.023035329
+\]
+d'où
+\[
+\boxed{\omega^{(1)}=-0.023035329}
+\]
+
+Vérification de l'amélioration\\
+Après cette mise à jour, on réévalue la fonction coût:
+\[
+J(\omega^{(1)}) = 8.950083
+\]
+Comme
+\[
+8.950083 < 9.488581,
+\]
+la fonction coût a diminué.
+La première étape de la descente de gradient améliore donc le recalage en rapprochant les deux formes.\\
+
+Résumé de l'itération:
+\[
+\begin{aligned}
+\omega^{(0)} &= 0\\
+\nabla J(\omega^{(0)}) &= 23.035329\\
+\Delta \omega=-\eta \nabla J(\omega^{(0)})&=-0.023035329\\
+\omega^{(1)}&=-0.023035329\\
+J(\omega^{(0)}) = 9.488581 \qquad &\rightarrow \qquad J(\omega^{(1)}) = 8.950083
+\end{aligned}
+\]
+
+\begin{figure}[H]\label{fig:RecalageRotationSO2}
+  \centering
+  \includegraphics[width=0.48\textwidth]{../Images/RecalageRotationSO2_Etape1.png}
+  \hfill
+  \includegraphics[width=0.48\textwidth]{../Images/RecalageRotationSO2.png}
+  \caption{Première et $50^{\text{ième}}$ étape du recalage sur les rotations $SO(2)$.}
+\end{figure}
+\end{exemple}
+
+\begin{exemple}[Recalons Lecocq]\label{ex:recalage-lecocq}\leavevmode\\
+Voyons des exemples de recalage par rotation sur $SO(2)$ avec des formes plus complexes.
+
+Dans la \texttt{Figure~(\ref{fig:RecalageRotationCoq1})}, on applique une rotation à un coq $x_S$ pour le faire ``matcher'' avec la forme cible $x_T$ qui est le sensiblement le même coq légèrement tourné. On voit que les deux figures superposées et cible se superposent assez bien. La géométrie du coq est préservée tout au long de la déformation, le cadre LDDMM restreint aux rotations est efficace lorsque la transformation est seulement une rotation.
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}
+    \node[anchor=south west, inner sep=0] (main) at (0,0)
+      {\includegraphics[width=0.42\textwidth]{../Images/RecalageRotationCoq1.png}};
+    \fill[white] (0.02, 0.02) rectangle (2.4, 1.3);
+    \node[anchor=south west, inner sep=0] (I0) at (0.05, 0.15)
+      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/CoqS0.png}}};
+    \node[below, font=\small] at (I0.south) {$x_S$};
+    \node[anchor=south west, inner sep=0] (I1) at (1.3, 0.15)
+      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/CoqT1.png}}};
+    \node[below, font=\small] at (I1.south) {$x_T$};
+    \draw[->, thick] (I0.east) -- (I1.west);
+  \end{tikzpicture}
+  \caption{Recalage sur les rotations $SO(2)$ d'un coq.}\label{fig:RecalageRotationCoq1}
+\end{figure}
+
+La \texttt{Figure~(\ref{fig:RecalageRotationCoq2et3})} présentent deux cas où la forme cible $x_T$ diffère de la forme source $x_S$ non seulement par une rotation, mais aussi par une déformation (des coq légèrement différents séparé de $x_S$ par une transformation non rigide). Dans ces situations, le modèle restreint à $SO(2)$ montre ses limites: en cherchant uniquement une rotation optimale, l'algorithme ne peut pas capturer les déformations non rigides. La forme transformée $x_1$ ne coïncide alors que partiellement et voir même pas du tout avec la cible $x_T$, et le terme d'attache aux données $\|x_1-x_T\|$ reste élevé malgré la convergence de l'optimisation.
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}
+    \node[anchor=south west, inner sep=0] (main) at (0,0)
+      {\includegraphics[width=0.42\textwidth]{../Images/RecalageRotationCoq2.png}};
+    \fill[white] (0.02, 0.02) rectangle (2.4, 1.3);
+    \node[anchor=south west, inner sep=0] (I0) at (0.05, 0.15)
+      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/coqS0.png}}};
+    \node[below, font=\small] at (I0.south) {$x_S$};
+    \node[anchor=south west, inner sep=0] (I1) at (1.3, 0.15)
+      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/coqT2.png}}};
+    \node[below, font=\small] at (I1.south) {$x_T$};
+    \draw[->, thick] (I0.east) -- (I1.west);
+  \end{tikzpicture}
+  \hfill
+  \begin{tikzpicture}
+    \node[anchor=south west, inner sep=0] (main) at (0,0)
+      {\includegraphics[width=0.42\textwidth]{../Images/RecalageRotationCoq3.png}};
+    \fill[white] (0.02, 0.02) rectangle (2.4, 1.3);
+    \node[anchor=south west, inner sep=0] (I0) at (0.05, 0.15)
+      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/coqS0.png}}};
+    \node[below, font=\small] at (I0.south) {$x_S$};
+    \node[anchor=south west, inner sep=0] (I1) at (1.3, 0.15)
+      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/coqT3.png}}};
+    \node[below, font=\small] at (I1.south) {$x_T$};
+    \draw[->, thick] (I0.east) -- (I1.west);
+  \end{tikzpicture}
+  \caption{Recalage sur les rotations $SO(2)$ de différents coqs.}\label{fig:RecalageRotationCoq2et3}
+\end{figure}
+\end{exemple}
+
+
+% -= CONCLUSION =-
+\chapter*{Conclusion}
+\addcontentsline{toc}{chapter}{Conclusion}
+
+
+% -= BIBLIOGRAPHIE =-
+\newpage
+\bibliographystyle{plain}
+\bibliography{bibliographie}
+\addcontentsline{toc}{chapter}{Références}
+
+
+% -= Annexe Code =-
+\appendix
+\chapter{Code Python}
+
+Tout le code sera disponible sur \href{https://github.com/DJ4nto}{ce dépôt} GitHub.
+
+\begin{lstlisting}[caption=Fonction Euler, label=code:Euler]
+def Euler(q0, omega, nt):
+    dt = 1.0 / (nt - 1)
+    q = q0.clone()
+    A = skew_matrix(omega)
+    
+    Q = torch.zeros((q0.shape[0], q0.shape[1], nt), dtype=q0.dtype, device=q0.device)
+    Q[:, :, 0] = q
+    
+    for t in range(1, nt):
+        q = q + dt * (q @ A.T)
+        Q[:, :, t] = q
+        
+    return q, Q
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Fonction rotation\_loss, label=code:rotation_loss]
+def rotation_loss(dataloss_fnc, nt):
+    def loss(q0, omega):
+        q_final, _ = Euler(q0, omega, nt)
+        dloss = dataloss_fnc(q_final)
+        reg = 0.5 * (omega ** 2)
+        return reg + dloss
+    return loss
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Fonction opti\_rotation, label=code:opti_rotation]
+def opti_rotation(q0, loss_fnc, n_iter, eta):
+    omega = torch.zeros(1, dtype=q0.dtype, device=q0.device, requires_grad=True)
+    optimizer = torch.optim.LBFGS([omega], lr=eta, line_search_fn='strong_wolfe')
+    losses = []
+
+    def closure():
+        optimizer.zero_grad()
+        L = loss_fnc(q0, omega)
+        L.backward()
+        return L
+
+    for i in range(n_iter):
+        L = optimizer.step(closure)
+        losses.append(L.item())
+
+    return omega.detach(), losses
+\end{lstlisting}
+
+
+% -= Annexe Images =-
+\chapter{Figures supplémentaires}
+
+Quelques figures supplémentaires.
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}
+    \node[anchor=south west, inner sep=0] (main) at (0,0)
+      {\includegraphics[width=0.42\textwidth]{../Images/RecalageRotationCoq0.png}};
+    \fill[white] (0.02, 0.02) rectangle (2.4, 1.3);
+    \node[anchor=south west, inner sep=0] (I0) at (0.05, 0.15)
+      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/CoqS0.png}}};
+    \node[below, font=\small] at (I0.south) {$I_0$};
+    \node[anchor=south west, inner sep=0] (I1) at (1.3, 0.15)
+      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/CoqT1.png}}};
+    \node[below, font=\small] at (I1.south) {$I_1$};
+    \draw[->, thick] (I0.east) -- (I1.west);
+  \end{tikzpicture}
+  \caption{Complète l'exemple~(\ref{ex:recalage-rigide-coq})}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{../Images/AnalyseRecalageCoq0.png}
+  \caption{Complète l'exemple~(\ref{ex:recalage-rigide-coq})}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{../Images/EvolutionRecalageRotationSO2.png}
+  \caption{Complète l'exemple~(\ref{ex:recalage-barre})}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{../Images/AnalyseRecalageCoq1.png}
+  \caption{Complète l'exemple~(\ref{ex:recalage-lecocq})}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{../Images/EvolutionRecalageCoq1.png}
+  \caption{Complète l'exemple~(\ref{ex:recalage-lecocq})}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{../Images/AnalyseRecalageCoq2.png}
+  \caption{Complète l'exemple~(\ref{ex:recalage-lecocq})}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{../Images/EvolutionRecalageCoq2.png}
+  \caption{Complète l'exemple~(\ref{ex:recalage-lecocq})}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{../Images/AnalyseRecalageCoq3.png}
+  \caption{Complète l'exemple~(\ref{ex:recalage-lecocq})}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1\textwidth]{../Images/EvolutionRecalageCoq3.png}
+  \caption{Complète l'exemple~(\ref{ex:recalage-lecocq})}
+\end{figure}
+
+\end{document}
