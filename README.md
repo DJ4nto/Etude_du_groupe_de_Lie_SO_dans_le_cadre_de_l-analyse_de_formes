@@ -44,4 +44,5 @@ Ce dépôt contient le travail réalisé durant un stage de recherche portant su
 ## Contact
 
 Auteur / Stagiaire: Antonin Lecocq
+
 Encadrant: Rayane Mouhli
