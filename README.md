@@ -10,8 +10,10 @@ Ce dépôt contient le travail réalisé durant un stage de recherche portant su
 └── 📁Etude_du_groupe_de_Lie_SO_dans_le_cadre_de_l-analyse_de_formes
     └── 📁Code
         ├── extract_contour.py
-        ├── recalage_SO2.ipynb
+        ├── recalage_Euler_SO2.ipynb
+        ├── recalage_Hamilton_SO2.ipynb
     └── 📁Images
+        ├── .DS_Store
         ├── AnalyseRecalageCoq0.png
         ├── AnalyseRecalageCoq1.png
         ├── AnalyseRecalageCoq2.png
@@ -20,6 +22,7 @@ Ce dépôt contient le travail réalisé durant un stage de recherche portant su
         ├── coqT1.png
         ├── coqT2.png
         ├── coqT3.png
+        ├── DirectVsHamiltonian.png
         ├── EvolutionRecalageCoq0.png
         ├── EvolutionRecalageCoq1.png
         ├── EvolutionRecalageCoq2.png
