@@ -46,18 +46,15 @@ Une méthode classique pour traiter ce problème est le cadre \textit{Large Defo
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
 
-Ce rapport présente le travail réalisé dans le cadre d'un stage consacré à l'étude mathématique et numérique d'un problème de recalage de formes. Le recalage consiste à déterminer une transformation permettant d'aligner une forme dite source sur une forme dite cible. Ce type de problème apparaît dans de nombreux domaines, par exemple en imagerie médicale ou encore en analyse morphologique, lorsqu'il s'agit de comparer des objets géométriques tout en tenant compte de leurs déformations possibles.
+Ce rapport contient le travail réalisé pendant un stage consacré à l'étude mathématique et numérique d'un problème de recalage de formes. Le recalage consiste à déterminer une transformation permettant d'aligner une forme dite source sur une forme dite cible. Ce type de problème apparaît dans de nombreux domaines, par exemple en imagerie médicale ou encore en analyse morphologique, lorsqu'il s'agit de comparer des objets géométriques tout en tenant compte de leurs déformations possibles.
 
-Le cadre général dans lequel s'inscrit ce stage est celui du \emph{Large Deformation Diffeomorphic Metric Mapping}, ou LDDMM\@. Cette approche sera détaillée dans le \textbf{Chapitre~\ref{chap:LDDMM}}. L'intérêt principal de cette méthode est de garantir que les transformations obtenues préservent la structure topologique des objets étudiés: il n'y a ni déchirure ni apparition de nouvelles formes.
+Le cadre général étudié durant ce stage est celui du \emph{Large Deformation Diffeomorphic Metric Mapping}, ou LDDMM\@. Cette approche sera détaillée dans le \textbf{Chapitre~\ref{chap:LDDMM}}. L'intérêt principal de cette méthode est de garantir que les transformations obtenues préservent la structure topologique des objets étudiés: il n'y a ni déchirure ni apparition de nouvelles formes.
 
 Cependant, le modèle LDDMM complet est mathématiquement et numériquement riche. Dans ce stage, nous avons choisi d'en étudier une restriction plus simple: le cas où les transformations admissibles sont uniquement des rotations. Cette restriction conduit naturellement à l'étude du groupe spécial orthogonal $SO(n)$ et de son algèbre de Lie $\mathfrak{so}(n)$. Elle permet de comprendre, dans un cadre en dimension finie, comment une transformation continue peut être engendrée par une équation différentielle.
 
-L'objectif du rapport est d'une part, de présenter les outils théoriques nécessaires: groupes de Lie, algèbres de Lie, exponentielle de matrice et équations différentielles linéaires. D'autre part, il s'agit d'illustrer ces notions par une implémentation numérique en Python, appliquée à des exemples simples de recalage par rotation dans le plan.
+L'objectif du rapport est de présenter les outils théoriques nécessaires: groupes de Lie, algèbres de Lie, exponentielle de matrice et équations différentielles linéaires. Aussi, il s'agit d'illustrer ces notions par une implémentation numérique en Python, appliquée à des exemples simples de recalage par rotation dans le plan.
 
-(Annonce des chapitres a rajouter) A faire \dots
-\begin{comment}
-Le premier chapitre rappelle les grandes idées du modèle LDDMM et introduit le problème variationnel de recalage. Le deuxième chapitre est consacré au groupe $SO(n)$, à ses propriétés géométriques et topologiques, ainsi qu'à son algèbre de Lie. Le troisième chapitre montre comment l'équation différentielle $\dot{x}(t)=Ax(t)$ apparaît naturellement dans ce contexte et comment elle se résout à l'aide de l'exponentielle de matrice. Le quatrième chapitre détaille le cas particulier de $SO(2)$, qui permet d'obtenir une description explicite des rotations planes. Enfin, le dernier chapitre présente l'implémentation algorithmique et discute les résultats obtenus sur différentes formes tests.
-\end{comment}
+Le rapport suit naturellement la progression adoptée pendant le stage. Le premier chapitre rappelle les grandes idées du modèle LDDMM et introduit le problème variationnel de recalage. Le deuxième chapitre est consacré au groupe $SO(n)$, à ses propriétés géométriques et topologiques, ainsi qu'à son algèbre de Lie. Le troisième chapitre montre comment l'équation différentielle $\dot{x}(t)=Ax(t)$ apparaît naturellement dans ce contexte et comment elle se résout à l'aide de l'exponentielle de matrice. Le quatrième chapitre donne des précisions sur la formulation Hamiltonienne du problème de recalage pour les rotations. Le cinquième chapitre détaille le cas particulier de $SO(2)$ et $SO(3)$, qui permet d'obtenir une description explicite des rotations. Enfin, le dernier chapitre présente l'implémentation algorithmique et discute les résultats obtenus suite à l'exécution de ces algorithmes.
 
 
 % -= LDDMM =-
@@ -148,7 +145,7 @@ Notre équation ci-dessus admet un minimum.
 
 \begin{proof}
 Admis.\\
-Piste de preuve: On utilise une méthode de calcul variationnel~\cite{MP25}, ``Direct method in the calculus of variations'' pour montrer que l'équation de minimisation admet un minimum.
+Nous ne démontrons pas ce résultat ici. Piste de preuve: On utilise une méthode de calcul variationnel~\cite{MP25}, ``Direct method in the calculus of variations'' pour montrer que l'équation de minimisation admet un minimum.
 \end{proof}
 
 Dans une écriture plus géométrique, on note $q_t\in Q$ la forme à l'instant $t$. L'action du champ de vecteurs $v_t$ sur la forme est notée
@@ -247,7 +244,6 @@ Considérons $G$ une variété différentielle.
 On appelle \textbf{espace tangent} en $g$ à $G$, que l'on note $T_{g}G$, l'ensemble des vecteurs tangents en $g$.
 \end{definition}
 
-\begin{comment}
 \begin{figure}[H]
   \centering
   \begin{tikzpicture}
@@ -294,7 +290,7 @@ On appelle \textbf{espace tangent} en $g$ à $G$, que l'on note $T_{g}G$, l'ense
   \end{tikzpicture}
   \caption{Figure du plan tangent à la sphère en un point.}
 \end{figure}
-\end{comment}
+
 
 % Groupe de Lie SO(n)
 \section{\texorpdfstring{Le groupe de Lie $SO(n)$}{Le groupe de Lie SO (n)}}
@@ -479,6 +475,7 @@ Ainsi, les colonnes de $R$ sont celles de l'identité, donc $R=I_n$.~\underline{
 
 L'action de $SO(n)$ dans $\mathbb{R}^n$ n'est \textbf{pas libre}:\\
 Si l'action est libre, alors pour tout $x\in \mathbb{R}^n$, si $x\neq 0$ et $R\neq I_n$ alors $Rx\neq x$.\\
+Le cas pour $n=2$ est trivial, posons $n\geq3$.\\
 Prenons $R=\begin{pmatrix} 1 & 0 \\ 0 & S \end{pmatrix}$ une matrice par bloc de $SO(n)$ où $S\in SO(n-1)$ différente de l'identité et $x=(1,0,\dots ,0)$.\\
 Alors $u(R,x)=Rx=x$ car $x$ est dans la direction de la première colonne de $R$.\\
 Donc \underline{l'action de $SO(n)$ dans $\mathbb{R}^n$ n'est pas libre}.\\
@@ -945,7 +942,6 @@ Ainsi, on retrouve que $e^A=R$, et donc que pour tout $R\in SO(n)$, il existe $A
 
 Dans ce chapitre, nous verrons comment cette équation différentielle linéaire apparaît naturellement sur le groupe spécial orthogonal $SO(n)$, l'importance de ce résultat, ainsi que sa résolution. Commençons avec le groupe de Lie $SO(n)$.
 
-\begin{comment}
 \begin{exemple}
 La translation à droite sur le groupe de Lie $SO(n)$ permet, comme on l'a vu, de ``passer'' d'un espace tangent à un autre de manière isomorphe.\\
 La figure ci-dessous \texttt{Figure~(\ref{fig:espaces-tangents})} illustre ce principe sur la surface $z=x^2-y^2$ (qui joue ici le rôle d'une variété différentielle). Le long de la courbe $y=1$, on a représenté les plans tangents ${T}_{g_0}G$ et ${T}_{g_t}G$ en $g_0=(-2,1,3)$ et $g_t=(0,1,-1)$, ainsi que les vecteurs tangents correspondants. Le passage de l'un à l'autre peut être réalisé par une translation à droite convenable.
@@ -1022,7 +1018,6 @@ La figure ci-dessous \texttt{Figure~(\ref{fig:espaces-tangents})} illustre ce pr
   \end{tikzpicture}
   \caption{Figure des plans tangents à une surface en $g_0$ et $g_t$.}\label{fig:espaces-tangents}
 \end{figure}
-\end{comment}
 
 \section{Obtenir l'équation différentielle \texorpdfstring{$\dot{x}(t)=Ax(t)$}{x.\ (t)=Ax (t)}}
 
@@ -1202,7 +1197,7 @@ Le principe du maximum de Pontryagin~\cite{Zib21} impose que le contrôle optima
 \dot p_t&=-\partial_q H(q_t,p_t,A_t).
 \end{aligned}
 \]
-La condition pour optimiser $A$ et obtenir le Hamiltonien réduit se trouve en annulant la dérivée du Hamiltonien par rapport à $A$:
+La condition pour optimiser $A$ et obtenir le Hamiltonien réduit se trouve en annulant la dérivée du Hamiltonien par rapport à $A$. En effet, $H$ étant strictement concave en $v$, l'annulation de la dérivée caractérise le maximum:
 \[
 \partial_A H(q,p,A)=0.
 \]
@@ -1409,9 +1404,140 @@ Autrement dit, dans le cas de $SO(2)$, le problème de recalage consiste à rech
 
 
 \section{\texorpdfstring{$SO(3)$}{SO (3)}, Les rotations en dimension 3}
-Le cas de la dimension $3$ introduit une géométrie supérieure à celle de la dimension $2$, notamment en raison de la \textit{non-commutativité} du groupe $SO(3)$. A faire \dots
+Le cas de la dimension $3$ introduit une géométrie supérieure à celle de la dimension $2$, notamment en raison de la \textit{non-commutativité} du groupe $SO(3)$.
 
-%étude de SO(3) : Exercice E.2. p30 cours3_groupe/algèbre-de-Lie (et Exemple p 29)
+\begin{proposition}
+Soit $R$ une matrice de $SO(3)$, alors cette matrice est semblable (par conjugaison orthogonale) à une matrice de cette forme:
+\[
+\begin{pmatrix}1 &0 &0\\ 0 &\cos(\theta) &-\sin(\theta)\\ 0 &\sin(\theta) &\cos(\theta)\end{pmatrix},\qquad\text{avec }\theta\in\mathbb{R}
+\]
+c'est-à-dire, il existe une matrice $P$ inversible et un réel $\theta$ vérifiant
+\[
+R=P\begin{pmatrix}1 &0 &0\\ 0 &\cos(\theta) &-\sin(\theta)\\ 0 &\sin(\theta) &\cos(\theta)\end{pmatrix}P^{-1}.
+\]
+\end{proposition}
+
+\begin{proof}
+Soit $R\in SO(3)$ et soit $u$ l'endomorphisme orthogonal associé.\\
+Considérons le polynôme caractéristique
+\[
+\chi(t)=\det(R-tI_3).
+\]
+C'est un polynôme de degré $3$, donc il admet au moins une racine réelle $\lambda$. Comme $R$ est une matrice orthogonale, toutes ses valeurs propres sont de module $1$, on obtient donc nécessairement $\lambda=1$.\\
+Soit $e_1$ un vecteur unitaire associé à la valeur propre $1$. Le sous-espace
+\[
+H=e_1^\perp
+\]
+est stable par $u$. En choisissant une base orthonormale $(e_2,e_3)$ de $H$, la base
+\[
+\mathcal B=(e_1,e_2,e_3)
+\]
+est orthonormale et
+\[
+\operatorname{Mat}_{\mathcal B}(u)=\begin{pmatrix}1 &0 &0\\ 0 &a &b\\ 0 &c &d\end{pmatrix},
+\]
+où
+\[
+A=\begin{pmatrix}a&b\\c&d\end{pmatrix}\in O(2).
+\]
+Comme
+\[
+\det(A)=\det(R)=1,
+\]
+on a en réalité $A\in SO(2)$. Or, par~(\ref{prop:forme-SO(2)}), toute matrice de $SO(2)$ est de la forme
+\[
+\begin{pmatrix}\cos\theta &-\sin\theta\\ \sin\theta &\cos\theta\end{pmatrix},\qquad \theta\in\mathbb R.
+\]
+Ainsi,
+\[
+\operatorname{Mat}_{\mathcal B}(u)=\begin{pmatrix}1 &0 &0\\ 0 &\cos\theta &-\sin\theta\\ 0 &\sin\theta &\cos\theta\end{pmatrix}.
+\]
+Si $P$ désigne la matrice de passage de la base canonique à la base orthonormale $\mathcal B$, alors $P$ est orthogonale et on a bien
+\[
+R=P\begin{pmatrix}1 &0 &0\\ 0 &\cos\theta &-\sin\theta\\ 0 &\sin\theta &\cos\theta\end{pmatrix}P^{-1}.
+\]
+\end{proof}
+
+\subsubsection{Équation $\dot{R}(t)=A R(t)$ dans $SO(3)$.}
+L'inconnue est une rotation que l'on va nommer ici $R$. On remarque que $A\in \mathfrak{so}(3)$ pour que la solution appartienne à $SO(3)$.\\
+Alors on peut écrire $A$ sous la forme
+\[
+A=\begin{pmatrix}0 & -\omega_3 & \omega_2\\\omega_3 & 0 & -\omega_1\\-\omega_2 & \omega_1 & 0\end{pmatrix}, \text{ avec } \omega=(\omega_1,\omega_2,\omega_3)\in\mathbb{R}^3. 
+\]
+On a vu que la solution d'une équation différentielle linéaire de ce type est $e^{tA}x_0$~(\ref{prop:solution-equadiff}). Dans notre cas, on a donc
+\[
+R(t)=e^{tA}R_0.
+\]
+Or l'exponentielle d'une matrice de $\mathfrak{so}(n)$ est à valeur dans $SO(n)$~(\ref{prop:ensemble-exp}).\\
+Contrairement au cas de $SO(2)$, on ne peut pas écrire $e^{tA}$ simplement car les matrices sur $SO(3)$ n'ont pas de formes simple. On va plutôt calculer avec les séries entières.\\
+Notons
+\[
+\theta=\|\omega\|=\sqrt{\omega_1^2+\omega_2^2+\omega_3^2},
+\]
+la vitesse angulaire (la norme du vecteur $\omega$), et, si $\theta\neq0$, $n=\omega/\theta$ le vecteur unitaire correspondant à l'axe de rotation.
+\begin{lemma}
+La matrice $A$ vérifie
+\[
+A^3=-\theta^2 A.
+\]
+\end{lemma}
+
+\begin{proof}\label{lem:matrices-SO3}
+Pour tout $x\in\mathbb{R}^3$, on a $Ax=\omega\times x$. Donc
+\[
+A^2x=\omega\times(\omega\times x)=(\omega\cdot x)\,\omega-\|\omega\|^2x=(\omega\cdot x)\,\omega-\theta^2x.
+\]
+Ainsi, $A^2=\omega\omega^{\top}-\theta^2I_3$. On en déduit
+\[
+A^3=A\big(\omega\omega^{\top}-\theta^2I_3\big)=(A\omega)\omega^{\top}-\theta^2A.
+\]
+Or $A\omega=\omega\times\omega=0$, d'où $A^3=-\theta^2A$.
+\end{proof}
+
+Cette relation~(\ref{lem:matrices-SO3}) permet de calculer, par récurrence, toutes les puissances de $A$ à partir de $A$ et $A^2$ seulement:
+\[
+A^{2k+1}={(-1)}^k\theta^{2k}A,\qquad A^{2k+2}={(-1)}^k\theta^{2k}A^2,\qquad k\in\mathbb{N}.
+\]
+On peut alors regrouper les termes pairs et impairs de la série exponentielle:
+\[
+e^{tA}=\sum_{k=0}^{\infty}\frac{{(tA)}^k}{k!}=I_3+\left(\sum_{k=0}^{\infty}\frac{{(-1)}^k{(\theta t)}^{2k+1}}{(2k+1)!\,\theta}\right)A+\left(\sum_{k=0}^{\infty}\frac{{(-1)}^k{(\theta t)}^{2k+2}}{(2k+2)!\,\theta^2}\right)A^2.
+\]
+On reconnaît dans ces deux sommes les développements en série entière du sinus et du cosinus:
+\[
+\sum_{k=0}^{\infty}\frac{{(-1)}^k{(\theta t)}^{2k+1}}{(2k+1)!}=\sin(\theta t),\qquad \sum_{k=0}^{\infty}\frac{{(-1)}^k{(\theta t)}^{2k+2}}{(2k+2)!}=1-\cos(\theta t).
+\]
+On obtient ainsi la formule de Rodrigues:
+\[
+e^{tA}=I_3+\frac{\sin(\theta t)}{\theta}A+\frac{1-\cos(\theta t)}{\theta^2}A^2.
+\]
+(Si $\theta=0$, c'est-à-dire $\omega=0$, on a simplement $e^{tA}=I_3$: l'absence de vitesse angulaire correspond à l'absence de rotation.)\\\\
+Ainsi,
+\[
+R(t)=\left(I_3+\frac{\sin(\theta t)}{\theta}A+\frac{1-\cos(\theta t)}{\theta^2}A^2\right)R_0.
+\]
+On retrouve que $R(t)$ est la rotation d'angle $\theta t$ autour de l'axe donné par $n=\omega/\theta$, appliquée à $R_0$. L'angle de rotation croît donc linéairement en $t$, exactement comme dans le cas de $SO(2)$.\\\\
+Il faut remarquer une différence importante avec le cas de $SO(2)$: le groupe $SO(3)$ n'est pas commutatif. En général, pour deux rotations $R_1,R_2\in SO(3)$,
+\[
+R_1R_2\neq R_2R_1.
+\]
+L'ordre dans lequel on applique deux rotations de l'espace a donc une importance.
+
+\subsubsection{Application au modèle de recalage.}
+Dans le cas des rotations en 3 dimensions, le problème se réduit aussi à l'optimisation d'un seul vecteur paramétrique $\omega\in\mathbb{R}^3$:
+\[
+\begin{aligned}
+\min_{\omega\in \mathbb{R}^3}&~J(\omega)=\frac{1}{2}\|\omega\|^2+\|x_1(\omega)-x_T\|\\
+&\text{tel que }\left\{\begin{array}{ll}\dot{x}(t)=A_{t}x(t)\\x_0=x_S\end{array}\right.
+\end{aligned}
+\]
+avec $A\in \mathfrak{so}(3)$.\\
+Sauf que la quantité $\omega$ contient alors deux informations:
+\begin{itemize}
+    \item sa direction donne l'axe de rotation;
+    \item sa norme donne l'angle de rotation appliqué entre $t=0$ et $t=1$.
+\end{itemize}
+Ainsi, dans le cas de $SO(3)$, le recalage consiste à chercher l'axe et l'angle de rotation qui permettent de rapprocher au mieux la forme source de la forme cible, tout en minimisant le coût énergétique associé à cette rotation.\\
+Cependant, contrairement au cas de $SO(2)$, l'optimisation n'est plus scalaire. Elle porte maintenant sur un vecteur de $\mathbb{R}^3$, et la non-commutativité de $SO(3)$ rend la géométrie du problème plus riche.
 
 
 % -= Algo =-
@@ -1488,7 +1614,7 @@ La fonction \texttt{Euler~(\ref{code:Euler})} intègre le flot rigide par la mé
 La fonction \texttt{rotation\_loss~(\ref{code:rotation_loss})} calcule l'énergie totale $J(\omega) =\frac{1}{2}{|\omega|}^2+\|x_1(\omega)-x_T\|$.\\
 
 \textbf{Étape 3:}\textit{ Mise à jour (descente de gradient)}\\
-La fonction \texttt{opti\_rotation~(\ref{code:opti_rotation})} optimise de la vitesse angulaire $\omega$ par descente de gradient.
+La fonction \texttt{opti\_rotation~(\ref{code:opti_rotation})} optimise la vitesse angulaire $\omega$ par descente de gradient.
 
 \begin{exemple}[Application de la méthode et calcul de la première itération]\label{ex:recalage-barre}\leavevmode\\
 On initialise le paramètre de rotation à:
@@ -1589,7 +1715,7 @@ Dans la \texttt{Figure~(\ref{fig:RecalageRotationCoq1})}, on applique une rotati
   \caption{Recalage sur les rotations $SO(2)$ d'un coq.}\label{fig:RecalageRotationCoq1}
 \end{figure}
 
-La \texttt{Figure~(\ref{fig:RecalageRotationCoq2et3})} présentent deux cas où la forme cible $x_T$ diffère de la forme source $x_S$ non seulement par une rotation, mais aussi par une déformation (des coq légèrement différents séparés de $x_S$ par une transformation non rigide). Dans ces situations, le modèle restreint à $SO(2)$ montre ses limites: en cherchant uniquement une rotation optimale, l'algorithme ne peut pas capturer les déformations non rigides. La forme transformée $x_1$ ne coïncide alors que partiellement et voire même pas du tout avec la cible $x_T$, et le terme d'attache aux données $\|x_1-x_T\|$ reste élevé malgré la convergence de l'optimisation.
+La \texttt{Figure~(\ref{fig:RecalageRotationCoq2et3})} présente deux cas où la forme cible $x_T$ diffère de la forme source $x_S$ non seulement par une rotation, mais aussi par une déformation (des coq légèrement différents séparés de $x_S$ par une transformation non rigide). Dans ces situations, le modèle restreint à $SO(2)$ montre ses limites: en cherchant uniquement une rotation optimale, l'algorithme ne peut pas capturer les déformations non rigides. La forme transformée $x_1$ ne coïncide alors que partiellement et voire même pas du tout avec la cible $x_T$, et le terme d'attache aux données $\|x_1-x_T\|$ reste élevé malgré la convergence de l'optimisation.
 
 \begin{figure}[H]
   \centering
@@ -1622,10 +1748,96 @@ La \texttt{Figure~(\ref{fig:RecalageRotationCoq2et3})} présentent deux cas où 
 \end{figure}
 \end{exemple}
 
-\section{Approche hamiltonienne~- Tir géodésique}\label{sec:tir-hamiltonien}
-On reprend maintenant la formulation hamiltonienne établie au \textbf{Chapitre~\ref{chap:Hamiltonien}} dans le cas de $N$ points repères, et on en déduit un algorithme de résolution par \emph{tir géodésique} (\textit{geodesic shooting})~\cite{MTT06}, où la seule variable d'optimisation est le moment initial $p_0$.
 
-A faire \dots
+\section{Approche hamiltonienne~- Tir géodésique}\label{sec:tir-hamiltonien}
+On reprend maintenant la formulation hamiltonienne établie au \textbf{Chapitre~\ref{chap:Hamiltonien}} dans le cas de $N$ points repères pour faire un algorithme de résolution par \emph{tir géodésique} (\textit{geodesic shooting})~\cite{MTT06}, où la seule variable d'optimisation est le moment initial.
+
+\begin{proposition}[Équations géodésiques pour les points repères sous $SO(n)$]\label{prop:geodesique-points-reperes}\leavevmode\\
+Les trajectoires optimales $(q_t,p_t)\in T^*Q$ du problème de recalage restreint à $SO(n)$ vues précédemment dans le \texttt{Chapitre~\ref{chap:Hamiltonien}} sont solutions de
+\[
+\begin{aligned}
+\dot q_t&=A^*_t\,q_t\\
+\dot p_t&=A^*_t\,p_t
+\end{aligned}
+\]
+avec
+\[
+A^*_t=\frac12\left(p_t q_t^{\top}-q_t p_t^{\top}\right)\in\mathfrak{so}(n).
+\]
+\end{proposition}
+
+\begin{proof}
+L'équation sur $q$ s'obtient directement en substituant le contrôle optimal $A^*$ dans la dynamique $\dot q_t=A_t{q}_t$.\\
+Pour l'équation sur $p$, on dérive le Hamiltonien réduit $H_r(q,p)=H(q,p,A^*(q,p))$ par rapport à $q$. Comme $A^*$ vérifie la condition d'optimalité $\partial_{A}H(q,p,A^*)=0$, la dérivée de $A^*$ par rapport à $q$ s'annule et il reste donc seulement $H$ exprimé en fonction de $q$:
+\[
+\partial_{q}H_r(q,p)=\partial_{q}H(q,p,A^*)={(A^*)}^{\top}p,
+\]
+puisque $H(q,p,A)=p^{\top}(Aq)-\frac{1}{2}\|A\|^2$ est linéaire en $q$. Les équations hamiltoniennes donnent alors
+\[
+\dot p_t=-\partial_{q}H_r(q_t,p_t)=-{(A^*_t)}^{\top}p_t=A^*_t\,p_t,
+\]
+où l'on a utilisé l'antisymétrie de $A^*_t\in\mathfrak{so}(n)$.
+\end{proof}
+
+Comme on disait juste au-dessus et donc contrairement à l'approche directe, on n'optimise plus le contrôle $\omega_t$ (ou $A_t$) le long de la trajectoire, mais uniquement la condition initiale $p_0\in{(\mathbb{R}^n)}^N$ du moment. L'algorithme est le suivant:
+\begin{itemize}
+  \item \textbf{Initialisation}: On choisit un moment initial:
+    \[
+    p_0^{(0)}=0.
+    \]
+  \item \textbf{Boucle d'optimisation} (pour chaque itération $k$):
+  \begin{enumerate}
+    \item \textit{Tir géodésique} (intégration d'Euler explicite des équations de la \textit{Proposition~\ref{prop:geodesique-points-reperes}}): En partant de $x_0=x_S$ et $p_0=p_0^{(k)}$, on intègre simultanément les deux dynamiques:
+    \[
+    x_{t+\Delta t}=x_t+\Delta t\,A^*_t\,x_t,\qquad p_{t+\Delta t}=p_t+\Delta t\,A^*_t\,p_t,
+    \]
+    où le champ optimal $A^*_t$ est recalculé à chaque pas à partir de $(x_t,p_t)$ courants. On obtient ainsi $x_1=x_1(p_0^{(k)})$ la déformation finale.
+    \item \textit{Évaluation de l'énergie}: On calcule le coût global
+    \[
+    J(p_0^{(k)}).
+    \]
+    \item \textit{Mise à jour} (descente de gradient sur $p_0$): On calcule
+    \[
+    p_0^{(k+1)}=p_0^{(k)}-\alpha\,\nabla J(p_0^{(k)}).
+    \]
+  \end{enumerate}
+\end{itemize}
+
+\begin{remark}
+La taille de la variable d'optimisation $p_0$ est fixée par la dimension de l'espace des formes ($nN$), indépendamment du nombre de pas de temps utilisés pour l'intégration. C'est précisément l'intérêt qu'on a mentionné au \textbf{Chapitre~\ref{chap:Hamiltonien}}: le problème de contrôle optimal, initialement posé sur un espace de contrôles $v_t$ de dimension infinie, se ramène à l'optimisation d'un unique moment initial $p_0$.
+\end{remark}
+
+\subsection{Méthode pour le recalage rigide sur \texorpdfstring{$SO(2)$}{SO (2)}}
+
+\textbf{Étape 1:}\textit{ Calcul du générateur optimal}\\
+La fonction \texttt{hamiltonian\_A~(\ref{code:hamiltonianA})} calcule $A^*_t=\frac12\left(p_t q_t^{\top}-q_t p_t^{\top}\right)$ à partir des tenseurs $p_t$ et $x_t$.\\
+
+\textbf{Étape 2:}\textit{ Tir géodésique}\\
+La fonction \texttt{Euler\_Hamilton~(\ref{code:EulerHamilton})} intègre simultanément $x_t$ et $p_t$ par la méthode d'Euler explicite sur $t\in[0,1]$, en réévaluant $A^*_t$ à chaque pas.\\
+
+\textbf{Étape 3:}\textit{ Évaluation de l'énergie}\\
+La fonction \texttt{hamiltonian\_loss~(\ref{code:hamiltonianloss})} calcule l'énergie totale 
+\[
+J(p_0)=\frac{1}{2}\|p_0\|^2+\|x_1(p_0)-x_T\|.
+\]
+
+\textbf{Étape 4:}\textit{ Mise à jour (descente de gradient sur $p_0$)}\\
+La fonction \texttt{opti\_hamiltonien~(\ref{code:optihamiltonian})} optimise le moment initial $p_0$ par descente de gradient.\\
+
+On n'illustrera pas cette partie par des exemples imagés car le changement de méthode n'impacte pas le résultat. Mais voici un exemple comparatif sur le temps d'exécution des deux méthodes.
+
+\begin{exemple}
+On compare le temps d'exécution des deux méthodes d'optimisation pour la rotation présentée en \texttt{Figure~(\ref{fig:RecalageRotationSO2})} (100 itérations de L-BFGS, mêmes points source et cible, même intégrateur d'Euler à $20$ pas de temps):
+\[
+t_{\text{Hamiltonien}} \approx 0.91\,\text{s}, \qquad t_{\text{Scalaire}} \approx 0.56\,\text{s}.
+\]
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.48\textwidth]{../Images/DirectVsHamiltonian.png}
+  \caption{Comparaison des temps d'exécution sur la rotation de la \texttt{Figure~\ref{fig:RecalageRotationSO2}}}
+\end{figure}
+L'approche scalaire est ici environ $1{,}6$ fois plus rapide que l'approche hamiltonienne. Cet écart s'explique par le nombre de variables intégrées à chaque pas de temps: l'approche directe ne propage que la position $x_t$, tandis que l'approche hamiltonienne propage simultanément la position $x_t$ \emph{et} le moment $p_t$, ce qui double la quantité de calcul à chaque itération d'Euler tout en recalculant $A^*_t$ à partir des deux tenseurs courants. En contrepartie, rappelons que l'approche hamiltonienne optimise un vecteur $p_0$ de même dimension que les points repères, ce qui la rend directement généralisable à des dynamiques bien plus riches (comme $SO(3)$ ou le cadre LDDMM général avec les difféomorphismes en dimension infinie), là où l'approche scalaire directe repose spécifiquement sur la paramétrisation par un angle $\omega$ propre à $SO(2)$.
+\end{exemple}
 
 
 % -= CONCLUSION =-
@@ -1634,7 +1846,11 @@ A faire \dots
 
 Ce stage a permis d'étudier un cas particulier du recalage de formes dans lequel les transformations sont restreintes aux rotations. Après avoir rappelé le cadre général LDDMM, nous avons décrit le groupe de Lie $SO(n)$, son algèbre de Lie $\mathfrak{so}(n)$ et le rôle de l'application exponentielle pour les rotations finies.
 
-A faire \dots
+La formulation hamiltonienne a constitué l'une des notions les plus challengeantes de ce travail. Le fait de comprendre que la recherche d'un champ de vitesse pouvait se ramener à l'intégration d'équations géodésiques dont la seule inconnue est le moment initial a permis d'appréhender concrètement l'intérêt du principe du maximum de Pontryagin. Les études des cas $SO(2)$ et $SO(3)$ ont rendu ces concepts plus clairs, notamment à travers les formulations simples du problème de minimisation en fonction d'un unique scalaire ou vecteur.
+
+D'un point de vue algorithmique: les deux implémentations, l'approche directe et le tir géodésique, ont confirmé l'efficacité du modèle lorsque la transformation est une rotation rigide, en mettant aussi en évidence ses limites quand on se restraint à ces transformations ``simples''. Dès qu'interviennent des déformations non rigides, la restriction à $SO(n)$ ne permet plus de représenter correctement les transformations. Ce travail met ainsi en lumière un compromis entre la rapidité de l'approche directe et la généralité de l'approche hamiltonienne.
+
+Plusieurs prolongements naturels sont possibles, notamment l'abandon de la limitation aux rotations afin de se rapprocher du modèle LDDMM complet, ou encore l'extension aux formes plus riches que les simples points repères. Au-delà de ces perspectives, ce stage a surtout constitué une occasion de mettre en pratique les outils d'algèbre et d'équa-diff, vu en cours théorique, dans un contexte appliqué. Il a aussi ouvert des portes sur des zones des mathématiques pas étudiées en $2^{\text{ième}}$ année de licence.
 
 
 % -= BIBLIOGRAPHIE =-
@@ -1693,6 +1909,63 @@ def opti_rotation(q0, loss_fnc, n_iter, eta):
         losses.append(L.item())
 
     return omega.detach(), losses
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Fonction hamiltonian\_A, label=code:hamiltonianA]
+def hamiltonian_A(p, q):
+    return 0.5 * (p.T @ q - q.T @ p)
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Fonction Euler\_Hamilton, label=code:EulerHamilton]
+def Euler_Hamilton(q0, p0, nt):
+    dt = 1.0 / (nt - 1)
+    q = q0.clone()
+    p = p0.clone()
+    Q = torch.zeros((q0.shape[0], q0.shape[1], nt), dtype=q0.dtype, device=q0.device)
+    P = torch.zeros((p0.shape[0], p0.shape[1], nt), dtype=p0.dtype, device=p0.device)
+    Q[:, :, 0] = q
+    P[:, :, 0] = p
+
+    for t in range(1, nt):
+        A = hamiltonian_A(p, q)
+        q = q + dt * (q @ A.T)
+        p = p + dt * (p @ A.T)
+        Q[:, :, t] = q
+        P[:, :, t] = p
+
+    return q, p, Q, P
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Fonction hamiltonian\_loss, label=code:hamiltonianloss]
+def hamiltonian_loss(dataloss_fnc, nt):
+    def loss(q0, p0):
+        q_final, p_final, _, _ = Euler_Hamilton(q0, p0, nt)
+        dloss = dataloss_fnc(q_final)
+        reg = 0.5 * (p0 ** 2).sum()
+        return reg + dloss
+    return loss
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Fonction opti\_hamiltonian, label=code:optihamiltonian]
+def opti_hamiltonian(q0, loss_fnc, n_iter, eta):
+    p0 = torch.zeros_like(q0, requires_grad=True)
+    optimizer = torch.optim.LBFGS([p0], lr=eta, line_search_fn='strong_wolfe')
+    losses = []
+
+    def closure():
+        optimizer.zero_grad()
+        L = loss_fnc(q0, p0)
+        L.backward()
+        return L
+
+    for i in range(n_iter):
+        L = optimizer.step(closure)
+        losses.append(L.item())
+
+        print(f"Iteration {i+1:3d} - Loss: {L.item():.6f} | |p0|: {p0.norm().item():.4f}")
+        print(f"")
+
+    return p0.detach(), losses
 \end{lstlisting}
 
 
