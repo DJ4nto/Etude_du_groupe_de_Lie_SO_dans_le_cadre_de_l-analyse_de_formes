@@ -1807,7 +1807,7 @@ Comme on disait juste au-dessus et donc contrairement à l'approche directe, on 
 La taille de la variable d'optimisation $p_0$ est fixée par la dimension de l'espace des formes ($nN$), indépendamment du nombre de pas de temps utilisés pour l'intégration. C'est précisément l'intérêt qu'on a mentionné au \textbf{Chapitre~\ref{chap:Hamiltonien}}: le problème de contrôle optimal, initialement posé sur un espace de contrôles $v_t$ de dimension infinie, se ramène à l'optimisation d'un unique moment initial $p_0$.
 \end{remark}
 
-\subsection{Méthode pour le recalage rigide sur \texorpdfstring{$SO(2)$}{SO (2)}}
+\subsection{Recalage rigide sur \texorpdfstring{$SO(2)$}{SO (2)}}
 
 \textbf{Étape 1:}\textit{ Calcul du générateur optimal}\\
 La fonction \texttt{hamiltonian\_A~(\ref{code:hamiltonianA})} calcule $A^*_t=\frac12\left(p_t q_t^{\top}-q_t p_t^{\top}\right)$ à partir des tenseurs $p_t$ et $x_t$.\\
