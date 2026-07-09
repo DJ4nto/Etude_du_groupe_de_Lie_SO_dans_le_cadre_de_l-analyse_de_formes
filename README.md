@@ -11,7 +11,7 @@ Ce dépôt contient le travail réalisé durant un stage de recherche portant su
 Voici un exemple d'application du modèle sur le recalage d'une forme de coq en dimension 2 (rotation optimale entre une source et une cible) :
 
 <p align="center">
-  <img src="Images/EvolutionRecalageCoq0.png" width="45%" alt="Évolution du recalage" />
+  <img src="Images/EvolutionRecalageCoq0.png" width="80%" alt="Évolution du recalage" />
 </p>
 
 ## Architecture du projet
