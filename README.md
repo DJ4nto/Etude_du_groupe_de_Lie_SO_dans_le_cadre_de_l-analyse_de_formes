@@ -31,6 +31,18 @@ Voici un exemple d'application du modèle sur le recalage d'une forme de coq en 
     └── README.md
 ```
 
+## Référence
+
+```
+@techreport{Lecocq2026,
+    title = {Étude du groupe de Lie $SO(n)$ dans le cadre de l'analyse de formes},
+    author = {Lecocq, Antonin},
+    supervisor = {Mouhli, Rayane},
+    institution = {Université Paris Cité, MAP5},
+    year = {2026}
+}
+```
+
 ## Contact
 
 Auteur / Stagiaire: Antonin Lecocq
