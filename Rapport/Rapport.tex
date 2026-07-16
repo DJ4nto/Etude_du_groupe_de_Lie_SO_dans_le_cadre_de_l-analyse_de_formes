@@ -1,5 +1,4 @@
 \documentclass[12pt]{report}
-
 \input{packages.tex}
 
 
@@ -90,7 +89,7 @@ La déformation à l'instant $t$ est donnée par l'action du difféomorphisme su
 \end{itemize}
 
 \begin{exemple}\label{ex:recalage-rigide-coq}
-Voyons un exemple de recalage rigide avec une forme source $x_S$ et une autre forme cible $x_T$ séparées par une rotation (cet exemple~(\ref{ex:recalage-lecocq}) sera détaillé plus loin). La forme source, à laquelle on a appliqué une rotation, recouvre parfaitement la forme cible:
+Voyons un exemple de recalage rigide avec une forme source $x_S$ et une autre forme cible $x_T$ séparées par une rotation (cet exemple sera détaillé plus loin~(\ref{ex:recalage-lecocq})). La forme source, à laquelle on a appliqué une rotation, recouvre parfaitement la forme cible:
 
 \begin{figure}[H]
   \centering
@@ -1476,14 +1475,14 @@ Notons
 \theta=\|\omega\|=\sqrt{\omega_1^2+\omega_2^2+\omega_3^2},
 \]
 la vitesse angulaire (la norme du vecteur $\omega$), et, si $\theta\neq0$, $n=\omega/\theta$ le vecteur unitaire correspondant à l'axe de rotation.
-\begin{lemma}
+\begin{lemma}\label{lem:matrices-SO3}
 La matrice $A$ vérifie
 \[
 A^3=-\theta^2 A.
 \]
 \end{lemma}
 
-\begin{proof}\label{lem:matrices-SO3}
+\begin{proof}
 Pour tout $x\in\mathbb{R}^3$, on a $Ax=\omega\times x$. Donc
 \[
 A^2x=\omega\times(\omega\times x)=(\omega\cdot x)\,\omega-\|\omega\|^2x=(\omega\cdot x)\,\omega-\theta^2x.
@@ -1706,17 +1705,17 @@ Dans la \texttt{Figure~(\ref{fig:RecalageRotationCoq1})}, on applique une rotati
       {\includegraphics[width=0.42\textwidth]{../Images/RecalageRotationCoq1.png}};
     \fill[white] (0.02, 0.02) rectangle (2.4, 1.3);
     \node[anchor=south west, inner sep=0] (I0) at (0.05, 0.15)
-      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/CoqS0.png}}};
+      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/coqS0.png}}};
     \node[below, font=\small] at (I0.south) {$x_S$};
     \node[anchor=south west, inner sep=0] (I1) at (1.3, 0.15)
-      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/CoqT1.png}}};
+      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/coqT1.png}}};
     \node[below, font=\small] at (I1.south) {$x_T$};
     \draw[->, thick] (I0.east) -- (I1.west);
   \end{tikzpicture}
   \caption{Recalage sur les rotations $SO(2)$ d'un coq.}\label{fig:RecalageRotationCoq1}
 \end{figure}
 
-La \texttt{Figure~(\ref{fig:RecalageRotationCoq2et3})} présente deux cas où la forme cible $x_T$ diffère de la forme source $x_S$ non seulement par une rotation, mais aussi par une déformation (des coq légèrement différents séparés de $x_S$ par une transformation non rigide). Dans ces situations, le modèle restreint à $SO(2)$ montre ses limites: en cherchant uniquement une rotation optimale, l'algorithme ne peut pas capturer les déformations non rigides. La forme transformée $x_1$ ne coïncide alors que partiellement et voire même pas du tout avec la cible $x_T$, et le terme d'attache aux données $\|x_1-x_T\|$ reste élevé malgré la convergence de l'optimisation.
+La \texttt{Figure~(\ref{fig:RecalageRotationCoq2et3})} présente deux cas où la forme cible $x_T$ diffère de la forme source $x_S$ non seulement par une rotation, mais aussi par une déformation (des coqs légèrement différents séparés de $x_S$ par une transformation non rigide). Dans ces situations, le modèle restreint à $SO(2)$ montre ses limites: en cherchant uniquement une rotation optimale, l'algorithme ne peut pas capturer les déformations non rigides. La forme transformée $x_1$ ne coïncide alors que partiellement et voire même pas du tout avec la cible $x_T$, et le terme d'attache aux données $\|x_1-x_T\|$ reste élevé malgré la convergence de l'optimisation.
 
 \begin{figure}[H]
   \centering
@@ -1849,7 +1848,7 @@ Ce stage a permis d'étudier un cas particulier du recalage de formes dans leque
 
 La formulation hamiltonienne a constitué l'une des notions les plus challengeantes de ce travail. Le fait de comprendre que la recherche d'un champ de vitesse pouvait se ramener à l'intégration d'équations géodésiques dont la seule inconnue est le moment initial a permis d'appréhender concrètement l'intérêt du principe du maximum de Pontryagin. Les études des cas $SO(2)$ et $SO(3)$ ont rendu ces concepts plus clairs, notamment à travers les formulations simples du problème de minimisation en fonction d'un unique scalaire ou vecteur.
 
-D'un point de vue algorithmique: les deux implémentations, l'approche directe et le tir géodésique, ont confirmé l'efficacité du modèle lorsque la transformation est une rotation rigide, en mettant aussi en évidence ses limites quand on se restraint à ces transformations ``simples''. Dès qu'interviennent des déformations non rigides, la restriction à $SO(n)$ ne permet plus de représenter correctement les transformations. Ce travail met ainsi en lumière un compromis entre la rapidité de l'approche directe et la généralité de l'approche hamiltonienne.
+D'un point de vue algorithmique: les deux implémentations, l'approche directe et le tir géodésique, ont confirmé l'efficacité du modèle lorsque la transformation est une rotation rigide, en mettant aussi en évidence ses limites quand on se restreint à ces transformations ``simples''. Dès qu'interviennent des déformations non rigides, la restriction à $SO(n)$ ne permet plus de représenter correctement les transformations. Ce travail met ainsi en lumière un compromis entre la rapidité de l'approche directe et la généralité de l'approche hamiltonienne.
 
 Plusieurs prolongements naturels sont possibles, notamment l'abandon de la limitation aux rotations afin de se rapprocher du modèle LDDMM complet, ou encore l'extension aux formes plus riches que les simples points repères. Au-delà de ces perspectives, ce stage a surtout constitué une occasion de mettre en pratique les outils d'algèbre et d'équa-diff, vu en cours théorique, dans un contexte appliqué. Il a aussi ouvert des portes sur des zones des mathématiques pas étudiées en $2^{\text{ème}}$ année de licence.
 
@@ -1982,10 +1981,10 @@ Quelques figures supplémentaires.
       {\includegraphics[width=0.42\textwidth]{../Images/RecalageRotationCoq0.png}};
     \fill[white] (0.02, 0.02) rectangle (2.4, 1.3);
     \node[anchor=south west, inner sep=0] (I0) at (0.05, 0.15)
-      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/CoqS0.png}}};
+      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/coqS0.png}}};
     \node[below, font=\small] at (I0.south) {$x_S$};
     \node[anchor=south west, inner sep=0] (I1) at (1.3, 0.15)
-      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/CoqT1.png}}};
+      {\scalebox{-1}[1]{\includegraphics[width=0.06\textwidth]{../Images/coqT1.png}}};
     \node[below, font=\small] at (I1.south) {$x_T$};
     \draw[->, thick] (I0.east) -- (I1.west);
   \end{tikzpicture}
