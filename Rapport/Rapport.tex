@@ -10,27 +10,6 @@
 \pagenumbering{gobble}
 \input{titlepage.tex}
 \thispagestyle{empty}
-\clearpage
-\pagenumbering{arabic}
-
-
-% -= DESCRIPTION DU STAGE =-
-\chapter*{Description du stage}
-\addcontentsline{toc}{chapter}{Description du stage}
-\section*{Contexte Scientifique}
-L'analyse de formes est un domaine à l'intersection de la géométrie différentielle, de la mécanique géométrique et du traitement d'image. Son objectif principal est de quantifier et de modéliser les déformations de formes telles que des images, courbes, surfaces, etc.~\cite{You10}. Un problème qui nous intéresse particulièrement est celui du recalage, c'est-à-dire, étant donné une forme source et une forme cible, comment modéliser la déformation optimale permettant de transformer l'une en l'autre.
-
-Une méthode classique pour traiter ce problème est le cadre \textit{Large Deformation Diffeomorphic Metric Mapping} (LDDMM,~\cite{FMTY05}), qui modélise les déformations comme des flots générés par des champs de vecteurs. Ce stage propose d'aborder les bases de cette théorie en s'intéressant au cas particulier des rotations, modélisées par le groupe $SO(n)$. Ce groupe est fondamental dans l'analyse des formes car avec les translations, il permet de modéliser l'entièreté des déformations possibles pour des corps solides~\cite{Hol11}.
-
-\section*{Objectifs du stage}
-\begin{itemize}
-  \item Revue de la littérature pour comprendre les bases du modèle \textit{Large Deformation Diffeomorphic Metric Mapping} (LDDMM).
-  \item Étude du groupe de rotations $SO(n)$ et de son algèbre de Lie $\mathfrak{so}(n)$.
-  \item Étude de l'équation différentielle linéaire $\dot{x}(t)=Ax(t)$ avec $A\in\mathfrak{so}(n)$.
-  \item Cas particuliers de $SO(2)$ et $SO(3)$.
-  \item Implémentation en Python de modèles de recalage avec $SO(n)$.
-\end{itemize}
-
 
 % -= TABLE DES MATIERES =-
 \clearpage
@@ -39,22 +18,19 @@ Une méthode classique pour traiter ce problème est le cadre \textit{Large Defo
 \newpage
 \clearpage
 \pagenumbering{arabic}
-\setcounter{page}{2}
 
 
 % -= INTRODUCTION =-
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
 
-Ce rapport contient le travail réalisé pendant un stage consacré à l'étude mathématique et numérique d'un problème de recalage de formes. Le recalage consiste à déterminer une transformation permettant d'aligner une forme dite source sur une forme dite cible. Ce type de problème apparaît dans de nombreux domaines, par exemple en imagerie médicale ou encore en analyse morphologique, lorsqu'il s'agit de comparer des objets géométriques tout en tenant compte de leurs déformations possibles.
+Ce rapport contient le travail réalisé pendant un stage consacré à l'étude mathématique et numérique d'un problème de recalage de formes. Le recalage consiste à déterminer une transformation permettant d'aligner une forme dite source sur une forme dite cible. Ce type de problème apparaît dans de nombreux domaines, par exemple en imagerie médicale ou encore en analyse morphologique.
 
-Le cadre général étudié durant ce stage est celui du \emph{Large Deformation Diffeomorphic Metric Mapping}, ou LDDMM\@. Cette approche sera détaillée dans le \textbf{Chapitre~\ref{chap:LDDMM}}. L'intérêt principal de cette méthode est de garantir que les transformations obtenues préservent la structure topologique des objets étudiés: il n'y a ni déchirure ni apparition de nouvelles formes.
+Le cadre général étudié durant ce stage est celui du \emph{Large Deformation Diffeomorphic Metric Mapping}, ou LDDMM~\cite{FMTY05}\cite{Pol18}\@. Cette approche sera détaillée dans le \textbf{Chapitre~\ref{chap:LDDMM}}. L'intérêt principal de cette méthode est de garantir que les transformations obtenues préservent la structure topologique des objets étudiés: il n'y a ni déchirure ni fusions de formes.
 
-Cependant, le modèle LDDMM complet est mathématiquement et numériquement riche. Dans ce stage, nous avons choisi d'en étudier une restriction plus simple: le cas où les transformations admissibles sont uniquement des rotations. Cette restriction conduit naturellement à l'étude du groupe spécial orthogonal $SO(n)$ et de son algèbre de Lie $\mathfrak{so}(n)$. Elle permet de comprendre, dans un cadre en dimension finie, comment une transformation continue peut être engendrée par une équation différentielle.
+Le modèle LDDMM complet est mathématiquement et numériquement riche. Dans ce stage, nous avons choisi d'en étudier une restriction plus simple: le cas où les transformations admissibles considérées sont uniquement des rotations~\cite{Hol11}. Cette restriction conduit naturellement à l'étude du groupe spécial orthogonal $SO(n)$ et de son algèbre de Lie $\mathfrak{so}(n)$. On s'intéressera donc, dans un cadre en dimension finie, à comment on transporte des formes via une action de groupe.
 
-L'objectif du rapport est de présenter les outils théoriques nécessaires: groupes de Lie, algèbres de Lie, exponentielle de matrice et équations différentielles linéaires. Aussi, il s'agit d'illustrer ces notions par une implémentation numérique en Python, appliquée à des exemples simples de recalage par rotation dans le plan.
-
-Le rapport suit naturellement la progression adoptée pendant le stage. Le premier chapitre rappelle les grandes idées du modèle LDDMM et introduit le problème variationnel de recalage. Le deuxième chapitre est consacré au groupe $SO(n)$, à ses propriétés géométriques et topologiques, ainsi qu'à son algèbre de Lie. Le troisième chapitre montre comment l'équation différentielle $\dot{x}(t)=Ax(t)$ apparaît naturellement dans ce contexte et comment elle se résout à l'aide de l'exponentielle de matrice. Le quatrième chapitre donne des précisions sur la formulation Hamiltonienne du problème de recalage pour les rotations. Le cinquième chapitre détaille le cas particulier de $SO(2)$ et $SO(3)$, qui permet d'obtenir une description explicite des rotations. Enfin, le dernier chapitre présente l'implémentation algorithmique et discute les résultats obtenus suite à l'exécution de ces algorithmes.
+L'objectif du rapport est de présenter les outils théoriques: groupes de Lie, algèbres de Lie, exponentielle de matrice et équations différentielles linéaires. Aussi, il s'agit d'illustrer ces notions par une implémentation numérique en Python, appliquée à des exemples simples de recalage par rotation dans le plan. Ainsi, le rapport suit naturellement la progression adoptée pendant le stage. Le premier chapitre rappelle les grandes idées du modèle \emph{Large Deformation Diffeomorphic Metric Mapping} et introduit le problème variationnel de recalage. Le deuxième chapitre est consacré à l'étude du groupe $SO(n)$, à ses propriétés géométriques et topologiques, ainsi qu'à son algèbre de Lie. Le troisième chapitre montre comment l'équation différentielle $\dot{x}(t)=Ax(t)$ apparaît naturellement dans le contexte du recalage sur des landmarks et comment elle se résout à l'aide de l'exponentielle de matrice. Le quatrième chapitre présente une formulation Hamiltonienne du problème de recalage pour les rotations. Le cinquième chapitre détaille le cas particulier de $SO(2)$ et $SO(3)$, qui permet d'obtenir une description explicite des rotations. Enfin, le dernier chapitre présente l'implémentation algorithmique et discute les résultats obtenus suite à l'exécution de ces algorithmes.
 
 
 % -= LDDMM =-
@@ -66,7 +42,7 @@ L'objectif de ce chapitre est de présenter le modèle LDDMM\@.
 
 \section{Déformations et Difféomorphismes}
 
-En analyse de formes, on cherche à transformer une forme source $I_0$ vers une forme cible $I_1$. Pour pouvoir effectuer cette transformation, on veut comparer ces deux formes en prenant en compte leurs propriétés géométriques. Et pour préserver la topologie de la forme, on ne déforme pas l'objet directement, mais l'espace ambiant via un flot de difféomorphisme $t\mapsto\varphi_t$ qui envoie la source sur la cible~\cite{Pie25}. Cette approche permet d'obtenir naturellement un difféomorphisme de tout l'espace.
+En analyse de formes, on cherche à transformer une forme source $q_S$ vers une forme cible $q_T$. Pour pouvoir effectuer cette transformation, on veut comparer ces deux formes en prenant en compte leurs propriétés géométriques. Et pour préserver la topologie de la forme, on ne déforme pas l'objet directement, mais l'espace ambiant. En effet, si on considère un champ de vitesse $v_t$, alors la solution de l'équation différentielle (que nous verrons par la suite) est un flot de diffeomorphismes appelé flot engendré par $v$, qui envoie la forme source sur la forme cible~\cite{Pie25}. Cette approche permet d'obtenir naturellement un difféomorphisme de tout l'espace.
 
 \begin{definition}[Flot de difféomorphismes]\leavevmode\\
 On considère une famille de difféomorphismes
@@ -81,11 +57,11 @@ Le flot est défini comme la solution de l'équation différentielle:
 Cette équation décrit le transport des points de l'espace sous l'action du champ de vitesse $v_t$.
 \end{definition}
 
-La déformation à l'instant $t$ est donnée par l'action du difféomorphisme sur la forme: $I_1=\varphi_t\cdot I_0$. Cette action dépend de la nature géométrique de la forme étudiée.
+L'ensemble des difféomorphismes est un groupe, et la déformation à l'instant $t$ est donc donnée par l'action de groupe des diffeomorphismes sur les formes: $q_T=\varphi_t\cdot q_S$. Cette action dépend de la nature géométrique de la forme étudiée~\cite{You10}.
 \begin{itemize}
-  \item \textbf{Points repères (Landmarks)}: Si $I_0=(x_1,\dots,x_N)\in{(\mathbb{R}^d)}^N$, l'action est l'évaluation ponctuelle: $\varphi\cdot I_0:=\varphi(I_0)$.
+  \item \textbf{Nuage de points (Landmarks)}: Si $q_S=(x_1,\dots,x_N)\in{(\mathbb{R}^d)}^N$, l'action est l'évaluation ponctuelle: $\varphi\cdot q_S:=\varphi(q_S)$.
   \item \textbf{Courbes paramétrées}: Si $q\in\mathcal{C}^1(I;\mathbb{R}^d)$, l'action est la composition à gauche: $\varphi\cdot q:=\varphi\circ q$.
-  \item \textbf{Images}: Si $I_0\in\mathcal{L}^2(\Omega,\mathbb{R})$, l'action est la composition avec l'inverse (pour préserver l'intensité): $\varphi\cdot I_0:=I_0\circ\varphi^{-1}$.
+  \item \textbf{Images}: Si $q_S d\in\mathcal{L}^2(\Omega,\mathbb{R})$, l'action est la composition avec l'inverse (pour préserver l'intensité): $\varphi\cdot q_S:=q_S\circ\varphi^{-1}$.
 \end{itemize}
 
 \begin{exemple}\label{ex:recalage-rigide-coq}
@@ -100,31 +76,31 @@ Voyons un exemple de recalage rigide avec une forme source $x_S$ et une autre fo
 
 
 \section{Espace des formes, tangent et cotangent}
-Dans la formulation géométrique du recalage, on considère un espace de champ de vecteurs $V\hookrightarrow C^{2}_{0}(\mathbb{R}^d,\mathbb{R}^d)$ et un espace de formes $Q$. Cet espace peut être, selon le problème étudié, un espace d'images, de courbes, de surfaces ou encore un espace de points repères. Dans le cas des points repères, l'espace des formes est
+Dans la formulation géométrique du recalage, on considère un espace de champ de vecteurs $V\hookrightarrow C^{2}_{0}(\mathbb{R}^d,\mathbb{R}^d)$ et un espace de formes $Q$. Cet espace peut être, selon le problème étudié, un espace d'images, de courbes, de surfaces ou encore de nuage de points. Dans le cas des nuages de points, l'espace des formes est
 \[
 Q={(\mathbb{R}^d)}^N.
 \]
 Cet espace s'identifie naturellement à $\mathbb{R}^{dN}$. C'est donc un espace vectoriel normé de dimension finie où $N$ désigne le nombre de points et $d$ la dimension de l'espace ambiant. Comme tout espace vectoriel normé de dimension finie est complet, $\mathbb{R}^{dN}$ est un espace de Banach. Ainsi, $Q$ peut être vu comme une variété de Banach\footnote{Variété de Banach: Espace localement semblable à un espace de Banach}.\\
 Pour décrire l'évolution des formes, on a besoin d'introduire les espaces tangents et cotangents.
 
-\begin{remark}[Espace tangent de $Q$]\leavevmode\\
+\begin{definition}[Espace tangent de $Q$]\leavevmode\\
 Puisque $Q$ est une variété (de Banach), on peut lui associer en tout point $q$ un espace tangent $T_{q}Q$, au sens de la définition générale~(\ref{def:espace-tangent}). On note
 \[
 TQ=\bigcup_{q\in Q} T_{q}Q=\{(q,v)\mid q\in Q, v\in T_{q}Q\}.
 \]
-\end{remark}
+\end{definition}
 
-\begin{definition}[Espace cotangent]\leavevmode\\
+\begin{definition}[Espace cotangent de $Q$]\leavevmode\\
 On définit son dual, l'espace cotangent $T_q^*Q$, qui est l'ensemble des formes linéaires sur $T_{q}Q$. On le définit par
 \[
 T^*Q=\bigcup_{q\in Q} T_q^*Q=\{(q,p)\mid q\in Q,\ p\in T_q^*Q\}.
 \]
-L'élément $p\in T_q^*Q$ est appelé un covecteur. Dans le cadre hamiltonien, il correspond à un moment.
+L'élément $p\in T_q^*Q$ est appelé un covecteur. Dans le cadre hamiltonien, on appelle ça un moment.
 \end{definition}
 
 
 \section{Problème variationnel LDDMM}
-Le problème de recalage consiste à déterminer le champ de vitesse $v_t$ qui minimise une énergie composée de deux termes:
+Le problème de recalage qui consiste a trouver la meilleure déformation peut s'écrire comme un problème variationnel où l'on doit déterminer le champ de vitesse $v_t$ qui minimise une énergie composée de deux termes:
 
 \begin{itemize}
 \item Un terme de régularité contrôlant le ``coût'' de la déformation (à gauche de l'addition),
@@ -134,29 +110,25 @@ Le premier terme favorise des déformations douces, tandis que le second impose 
 Le problème s'écrit:
 \[
 \begin{aligned}
-\min_{v\in L^2([0,1],V)}~&J(v)=\frac{1}{2}\int_{0}^{1}\|v_t\|_{V}^2\,dt+\|I_0\circ\varphi_1^{-1}-I_1\|_{L^2}\\
+\inf_{v\in L^2([0,1],V)}~&J(v)=\frac{1}{2}\int_{0}^{1}\|v_t\|_{V}^2\,dt+\|\varphi_1\cdot q_S-q_T\|_{L^2}\\
 &\text{tel que }\left\{\begin{array}{ll}\dot{\varphi}_t=v_t\circ\varphi_t\\\varphi_0=Id\end{array}\right.
 \end{aligned}
 \]
 
-\begin{theorem}
-Notre équation ci-dessus admet un minimum.
+\begin{theorem}\label{thm:min}
+Notre problème ci-dessus admet un minimum.
 \end{theorem}
 
 \begin{proof}
-Admis.\\
-Nous ne démontrons pas ce résultat ici. Piste de preuve: On utilise une méthode de calcul variationnel~\cite{MP25}, ``Direct method in the calculus of variations'' pour montrer que l'équation de minimisation admet un minimum.
+Nous admettons le théorème et ne démontrons donc pas ce résultat ici. Piste de preuve: On utilise une méthode de calcul variationnel~\cite{MP25}, ``Direct method in the calculus of variations'' pour montrer que l'équation de minimisation admet un minimum, et en plus, le minimum est global.
 \end{proof}
 
-Dans une écriture plus géométrique, on note $q_t\in Q$ la forme à l'instant $t$. L'action du champ de vecteurs $v_t$ sur la forme est notée
-\[
-v_t\circ q_t.
-\]
+Réécrivons le problème en utilisant le \textit{Théorème~\ref{thm:min}}. On note $q_t=\varphi\cdot q_S$ la forme à l'instant $t$. L'action du champ de vecteurs $v_t$ sur la forme est notée $v_t\circ q_t$.\\
 La dynamique du problème de recalage s'écrit alors
 \[
 \dot q_t = v_t\circ q_t.
 \]
-Le problème variationnel peut donc aussi s'écrire sous la forme
+Le problème variationnel peut donc s'écrire sous la forme:
 \[
 \begin{aligned}
 \min_{v\in L^2([0,1],V)}&\int_0^1 \|v_t\|_V^2\,dt + \mathcal{D}(q_1,q_T)\\
@@ -164,18 +136,10 @@ Le problème variationnel peut donc aussi s'écrire sous la forme
 \end{aligned}
 \]
 avec $\mathcal{D}$ une métrique adaptée aux données.\\
-Ici, $q_S$ désigne la forme source et $q_T$ la forme cible. Le terme
-\[
-\int_0^1 \|v_t\|_V^2\,dt
-\]
-mesure l'énergie de la déformation, tandis que le terme
-\[
-\|q_1-q_T\|
-\]
-mesure l'écart final entre la forme transportée $q_1$ et la cible $q_T$.
+Ici, $q_S$ désigne encore la forme source et $q_T$ la forme cible.
 
 \begin{remark}
-Pour appliquer la méthode LDDMM, on n'a besoin que de l'action du groupe des difféomorphismes sur l'espace de formes. La formulation du problème de minimisation repose uniquement sur l'application du groupe à cet espace via $I_0 \mapsto I_0 \circ \varphi^{-1}$.
+Pour appliquer la méthode LDDMM, on n'a besoin que de l'action du groupe des difféomorphismes sur l'espace de formes. La formulation du problème de minimisation repose uniquement sur l'application du groupe à cet espace via $q_S \mapsto \varphi_1\cdot q_S$.
 \end{remark}
 
 
@@ -184,11 +148,11 @@ On peut interpréter le problème LDDMM comme un problème de contrôle optimal~
 \[
 \dot q_t = v_t\circ q_t.
 \]
-Pour traiter ce problème contraint, on introduit un covecteur $p_t\in T_{q_t}^*Q$, appelé moment. Le Hamiltonien de contrôle est
+Pour traiter ce problème contraint, on introduit un covecteur $p_t\in T_{q_t}^*Q$, appelé moment. Le Hamiltonien associé au problème de contrôle optimal noté
 \[
 H:T^*Q\times V\longrightarrow \mathbb{R}
 \]
-par
+est défini par
 \[
 H(q,p,v)=(p\mid v\circ q)-\frac{1}{2}\|v\|_V^2.
 \]
@@ -199,7 +163,7 @@ Le principe du maximum de Pontryagin~\cite{Zib21} impose que le contrôle optima
 \[
 \partial_v H(q,p,v)=0.
 \]
-On obtient ainsi une vitesse optimale
+On obtient ainsi un champ de vecteur optimal
 \[
 v^*=v^*(q,p).
 \]
@@ -207,7 +171,7 @@ On remplace ensuite cette expression dans le hamiltonien initial pour définir l
 \[
 H_r(q,p)=H(q,p,v^*(q,p)).
 \]
-Cette réduction permet de transformer le problème de contrôle optimal en un système d'équations différentielles sur $T^*Q$.
+Cette réduction permet de transformer le problème de contrôle optimal qui est en dimension infinie en un système d'équations différentielles sur $T^*Q$ qui est un problème en dimension finie.
 
 \subsection{Équations géodésiques}
 Les trajectoires optimales, aussi appelées géodésiques, sont alors données par les équations géodésiques (appelées aussi équations hamiltoniennes).
@@ -223,10 +187,10 @@ La première équation décrit l'évolution de la forme. La seconde décrit l'é
 \]
 
 \begin{remark}
-L'intérêt principal de la formulation hamiltonienne est qu'elle permet de remplacer l'optimisation sur le champ de vitesse $v_t$, qui appartient à un espace de dimension infinie, par l'étude d'un système différentiel portant sur les variables $(q_t,p_t)$. Dans le cas des points repères, ces variables sont en nombre fini: les positions $q_i(t)$ et les moments $p_i(t)$. Ainsi, le problème LDDMM se ramène à un problème en dimension finie, plus simple à analyser et à résoudre numériquement.
+L'intérêt principal de la formulation hamiltonienne est qu'elle permet de remplacer l'optimisation sur le champ de vitesse $v_t$, qui appartient à un espace de dimension infinie, par l'étude d'un système différentiel portant sur les variables $(q_t,p_t)$.
 \end{remark}
 
-Ce chapitre a posé les fondements nécessaires à l'étude des cas particuliers, comme celui des rotations $SO(2)$ et $SO(3)$, qui seront abordés dans les chapitres suivants. En effet, dans ce rapport nous ne traitons pas le modèle LDDMM complet. Nous étudions une restriction de ce cadre au cas où les transformations sont uniquement des rotations en dimension finie. Cette restriction permet d'obtenir un modèle plus simple que le modèle LDDMM complet qui repose sur l'action du groupe des difféomorphismes en dimension infinie.
+Ce chapitre a posé les fondements nécessaires à l'étude des cas particuliers, comme celui des rotations $SO(2)$ et $SO(3)$, qui seront abordés dans les chapitres suivants. En effet, dans ce rapport nous ne traitons pas le modèle LDDMM complet. Nous étudions une restriction de ce cadre dans le cas où les transformations considérées sont uniquement des rotations. Cette restriction permet d'obtenir un modèle plus simple que le modèle LDDMM complet qui repose sur l'action du groupe des difféomorphismes en dimension infinie.
 
 
 % -= Lie =-
@@ -588,7 +552,7 @@ Soient $(X,\|~\|)$ un espace vectoriel normé de dimension finie et $E\subset X$
 \end{theorem}
 
 \begin{proof}
-$\Rightarrow$ Une partie compacte est aussi fermée et bornée. Cette implication est donc vraie dans n'importe quel espace et n'a rien à voir avec le cadre de la dimension finie!
+$\Rightarrow$ Une partie compacte est aussi fermée et bornée. Cette implication est donc vraie dans n'importe quel espace.
 
 $\Leftarrow$ C'est une conséquence du Théorème de Bolzano-Weierstrass.
 \end{proof}
@@ -610,11 +574,11 @@ X &\longmapsto \det(X)&X &\longmapsto X^{\top}X
 \end{aligned}
 \]
 On pose $\{1\}\subset\mathbb{R}$ et $\{Id\}\subset\mathcal{M}_n(\mathbb{R})$, deux fermés (car ce sont des singletons).\\
-Alors $SO(n)=f^{-1}(\{1\})\cap g^{-1}(\{Id\})$, comme l'intersection de deux fermés (images réciproques de fermés par des applications continues).
+Alors $SO(n)=f^{-1}(\{1\})\cap g^{-1}(\{I_n\})$, comme l'intersection de deux fermés (images réciproques de fermés par des applications continues).
 Ainsi \underline{$SO(n)$ est fermé}.\\
 
 (2) $SO(n)$ \textbf{borné}.\\
-Soit $A\in SO(n)$, alors $\|A\|_F^2=\operatorname{Tr}(A^{\top}A)=\operatorname{Tr}(Id)=n$.\\
+Soit $A\in SO(n)$, alors $\|A\|_F^2=\operatorname{Tr}(A^{\top}A)=\operatorname{Tr}(I_n)=n$.\\
 On a donc: $\forall A\in SO(n), \exists M=\sqrt{n}$ tel que $\|A\|\leq M$ (toutes les normes sont équivalentes en dimension finie).\\
 On retrouve que \underline{$SO(n)$ est borné} car $SO(n)\subset B(0,M)$.\\
 
@@ -672,7 +636,7 @@ Et \underline{$SO(n)$ est connexe par arcs} car c'est une variété différentie
 L'outil principal qui nous permettra d'étudier les groupes de Lie est leur algèbre de Lie. Définissons cette structure pour les rotations et intéressons-nous aux propriétés différentielles des groupes de Lie. Prenons $G$ un groupe de Lie et $e\in G$ son élément neutre.
 
 \begin{definition} [Algèbre de Lie]\leavevmode\\
-Une \textbf{algèbre de Lie}, notée $\mathfrak{g} = T_{e}G$, est un espace vectoriel muni d'un produit appelé commutateur (ou crochet de Lie), qui est une application bilinéaire antisymétrique~\cite{Hol24}
+Une \textbf{algèbre de Lie}, notée $\mathfrak{g} = T_{e}G$, est un espace vectoriel muni d'un produit appelé crochet de Lie, qui est une application bilinéaire antisymétrique~\cite{Hol24}
 \[
 [\cdot,\cdot] : \mathfrak{g} \times \mathfrak{g} \to \mathfrak{g}
 \]
@@ -714,7 +678,7 @@ Finalement, on a \underline{$\mathfrak{so}(n)=\mathfrak{o}(n)$}.
 \end{proof}
 
 \begin{proposition}
-$T_{Id}SO(n)=\{H\in \mathcal{M}_n(\mathbb{R})~|~H^{\top}=-H\}$ est l'algèbre de Lie de $SO(n)$. Plus précisément: $\mathfrak{so}(n)=T_{Id}SO(n)$.
+$T_{Id}SO(n)=\{H\in \mathcal{M}_n(\mathbb{R})~|~H^{\top}=-H\}$ est l'algèbre de Lie de $SO(n)$, plus précisément: $\mathfrak{so}(n)=T_{Id}SO(n)$.
 \end{proposition}
 
 \begin{proof}
@@ -789,7 +753,7 @@ R_M\colon SO(n) &\longrightarrow SO(n)\\
 X&\longmapsto u\times v=XM
 \end{aligned}
 \]
-avec $u$ l'application identité et $v$ une application constante sur $SO(n)$. Par produit d'applications lisses (avec le produit matriciel), on a que \underline{$R_M$ est une application lisse} sur $SO(n)$.
+Par produit lisse (car c'est une application polynomiale en les coefficients), on a que \underline{$R_M$ est une application lisse} sur $SO(n)$.
 \end{proof}
 
 \begin{proposition}\label{prop:Tangent-isomorphe}
@@ -825,6 +789,82 @@ On en déduit que $T_M SO(n)$ et $T_{Id}SO(n)$ sont isomorphes.
 La translation à droite permet de ``passer''\footnote{Passer: transporter de manière isomorphe les structures} d'un espace tangent à un autre, reliant l'espace tangent en un point quelconque et l'espace tangent à l'identité~(\ref{prop:Tangent-isomorphe}).
 \end{remark}
 
+\begin{exemple}
+La figure ci-dessous \texttt{Figure~(\ref{fig:espaces-tangents})} illustre ce principe sur la surface $z=x^2-y^2$ (qui joue ici le rôle d'une variété différentielle). Le long de la courbe $y=1$, on a représenté les plans tangents ${T}_{g_0}G$ et ${T}_{g_t}G$ en $g_0=(-2,1,3)$ et $g_t=(0,1,-1)$, ainsi que les vecteurs tangents correspondants. Le passage de l'un à l'autre peut être réalisé par une translation à droite convenable.
+\end{exemple}
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}
+  \begin{axis}[
+      view={120}{30},
+      xlabel=$x$, ylabel=$y$, zlabel=$z$,
+      colormap/viridis,
+      grid=major,
+      clip=false,
+  ]
+  % Surface principale
+  \addplot3[
+      surf,
+      shader=interp,
+      samples=40,
+      domain=-2:2,
+      domain y=-2:2,
+      opacity=0.8
+  ]
+  {x^2 - y^2};
+  % Plan tangent en g_0
+  \addplot3[
+      surf,
+      faceted color=blue,
+      fill opacity=0.3,
+      draw opacity=0.2,
+      samples=15,
+      domain=-2.5:-1.5,
+      domain y=0.5:1.5
+  ]
+  {-4*x -2*y -3};
+  % Plan tangent en g_t
+  \addplot3[
+      surf,
+      faceted color=blue,
+      fill opacity=0.3,
+      draw opacity=0.2,
+      samples=15,
+      domain=-0.8:0.8,
+      domain y=0.5:1.5
+  ]
+  {-2*y +1};
+  % Courbe sur la surface (y=1)
+  \addplot3[
+      color=red,
+      thick,
+      domain=-2:2,
+      samples=50,
+      samples y=0,
+  ]
+  ({x}, 1, {x^2 - 1});
+  % Points g_0, g_t, g_1
+  \addplot3[only marks, mark=*, mark size=2.5, color=red] coordinates {
+      (-2,1,3)  % g_0
+      (0,1,-1)  % g_t
+      (2,1,3)   % g_1
+  };
+  % Étiquettes des points
+  \node[anchor=south west] at (axis cs:-2,1,3) {$\mathbf{g}_0$};
+  \node[anchor=north]      at (axis cs:0,1,-1) {$\mathbf{g}_t$};
+  \node[anchor=south east] at (axis cs:2,1,3) {$\mathbf{g}_1$};
+  % Vecteur tangent en g_0
+  \draw[->, thick, blue] (axis cs:-2,1,3) -- (axis cs:-1.75,1,2);
+  \node[anchor=south east, blue] at (axis cs:-1.75,1,2) {$\mathbf{T}_{g_0}G$};
+  % Vecteur tangent en g_t
+  \draw[->, thick, blue] (axis cs:0,1,-1) -- (axis cs:0.5,1,-1);
+  \node[anchor=south, blue] at (axis cs:0.5,1,0) {$\mathbf{T}_{g_t}G$};
+  \end{axis}
+  \end{tikzpicture}
+  \caption{Figure des plans tangents à une surface en $g_0$ et $g_t$.}\label{fig:espaces-tangents}
+\end{figure}
+
 
 % Exponentielle
 \section{L'application exponentielle}
@@ -832,7 +872,7 @@ La translation à droite permet de ``passer''\footnote{Passer: transporter de ma
 \begin{definition} [Exponentielle de matrice]\leavevmode\\
 Soit $A\in \mathcal{M}_n(\mathbb{K})$ avec $\mathbb{K}=\mathbb{R}$ ou $\mathbb{C}$.  On appelle exponentielle de la matrice $A$, notée $e^A$, la somme de la série:
 \[
-e^{A}=\sum_{k=0}^{\infty}\frac{A^k}{k!}~,\qquad A^0=I_n~,\qquad \exp(0)=I_n.
+e^{A}=\sum_{k=0}^{\infty}\frac{A^k}{k!}~,\qquad \exp(0)=I_n.
 \]
 \end{definition}
 
@@ -942,82 +982,6 @@ Ainsi, on retrouve que $e^A=R$, et donc que pour tout $R\in SO(n)$, il existe $A
 
 Dans ce chapitre, nous verrons comment cette équation différentielle linéaire apparaît naturellement sur le groupe spécial orthogonal $SO(n)$, l'importance de ce résultat, ainsi que sa résolution. Commençons avec le groupe de Lie $SO(n)$.
 
-\begin{exemple}
-La translation à droite sur le groupe de Lie $SO(n)$ permet, comme on l'a vu, de ``passer'' d'un espace tangent à un autre de manière isomorphe.\\
-La figure ci-dessous \texttt{Figure~(\ref{fig:espaces-tangents})} illustre ce principe sur la surface $z=x^2-y^2$ (qui joue ici le rôle d'une variété différentielle). Le long de la courbe $y=1$, on a représenté les plans tangents ${T}_{g_0}G$ et ${T}_{g_t}G$ en $g_0=(-2,1,3)$ et $g_t=(0,1,-1)$, ainsi que les vecteurs tangents correspondants. Le passage de l'un à l'autre peut être réalisé par une translation à droite convenable.
-\end{exemple}
-
-\begin{figure}[H]
-  \centering
-  \begin{tikzpicture}
-  \begin{axis}[
-      view={120}{30},
-      xlabel=$x$, ylabel=$y$, zlabel=$z$,
-      colormap/viridis,
-      grid=major,
-      clip=false,
-  ]
-  % Surface principale
-  \addplot3[
-      surf,
-      shader=interp,
-      samples=40,
-      domain=-2:2,
-      domain y=-2:2,
-      opacity=0.8
-  ]
-  {x^2 - y^2};
-  % Plan tangent en g_0
-  \addplot3[
-      surf,
-      faceted color=blue,
-      fill opacity=0.3,
-      draw opacity=0.2,
-      samples=15,
-      domain=-2.5:-1.5,
-      domain y=0.5:1.5
-  ]
-  {-4*x -2*y -3};
-  % Plan tangent en g_t
-  \addplot3[
-      surf,
-      faceted color=blue,
-      fill opacity=0.3,
-      draw opacity=0.2,
-      samples=15,
-      domain=-0.8:0.8,
-      domain y=0.5:1.5
-  ]
-  {-2*y +1};
-  % Courbe sur la surface (y=1)
-  \addplot3[
-      color=red,
-      thick,
-      domain=-2:2,
-      samples=50,
-      samples y=0,
-  ]
-  ({x}, 1, {x^2 - 1});
-  % Points g_0, g_t, g_1
-  \addplot3[only marks, mark=*, mark size=2.5, color=red] coordinates {
-      (-2,1,3)  % g_0
-      (0,1,-1)  % g_t
-      (2,1,3)   % g_1
-  };
-  % Étiquettes des points
-  \node[anchor=south west] at (axis cs:-2,1,3) {$\mathbf{g}_0$};
-  \node[anchor=north]      at (axis cs:0,1,-1) {$\mathbf{g}_t$};
-  \node[anchor=south east] at (axis cs:2,1,3) {$\mathbf{g}_1$};
-  % Vecteur tangent en g_0
-  \draw[->, thick, blue] (axis cs:-2,1,3) -- (axis cs:-1.75,1,2);
-  \node[anchor=south east, blue] at (axis cs:-1.75,1,2) {$\mathbf{T}_{g_0}G$};
-  % Vecteur tangent en g_t
-  \draw[->, thick, blue] (axis cs:0,1,-1) -- (axis cs:0.5,1,-1);
-  \node[anchor=south, blue] at (axis cs:0.5,1,0) {$\mathbf{T}_{g_t}G$};
-  \end{axis}
-  \end{tikzpicture}
-  \caption{Figure des plans tangents à une surface en $g_0$ et $g_t$.}\label{fig:espaces-tangents}
-\end{figure}
 
 \section{Obtenir l'équation différentielle \texorpdfstring{$\dot{x}(t)=Ax(t)$}{x.\ (t)=Ax (t)}}
 
@@ -1080,7 +1044,7 @@ La solution de l'équation différentielle linéaire ci-dessus permet, à partir
 
 \section{Solution de \texorpdfstring{$\dot{x}(t)=Ax(t)$}{x.\ (t)=Ax (t)}}
 
-Pour garantir l'existence et l'unicité des trajectoires sur le groupe, revenons au cas général avec le théorème suivant.
+Pour garantir l'existence et l'unicité des trajectoires sur l'espace de forme, revenons au cas général avec le théorème suivant.
 
 \begin{theorem} [Théorème de Cauchy-Lipschitz]\label{thm:Cauchy-Lipschitz}\leavevmode\\
 Soient $\Omega$ un ouvert de $\mathbb{R} \times \mathbb{R}^d$ et $F\colon \Omega \longrightarrow\mathbb{R}^d$. Supposons que:
@@ -1137,16 +1101,16 @@ Ainsi, l'unique solution de l'équation différentielle est \underline{$x(t)=e^{
 
 % -= Hamiltonien =-
 \chapter{Formulation Hamiltonienne du recalage sur \texorpdfstring{$SO(n)$}{SO (n)}}\label{chap:Hamiltonien}
-Avant de nous restreindre aux cas explicites $SO(2)$ et $SO(3)$, reprenons le cadre hamiltonien introduit au \textbf{Chapitre~\ref{chap:LDDMM}}. Étudions le cas où le groupe de transformations est $SO(n)$ et que la forme étudiée est un ensemble de points repères.
+Avant de nous restreindre aux cas explicites $SO(2)$ et $SO(3)$, reprenons le cadre hamiltonien introduit au \textbf{Chapitre~\ref{chap:LDDMM}}. Étudions le cas où le groupe de transformations est $SO(n)$ et que la forme étudiée est un nuage de points.
 
 
-\section{Espaces tangent et cotangent des points repères}
+\section{Espaces tangent et cotangent des nuages de points}
 Dans ce cadre, le champ de vecteurs $v_t$ n'est plus un difféomorphisme quelconque: il est engendré par une matrice antisymétrique. On travaille donc dans l'espace
 \[
 V=Skew_n=\mathfrak{so}(n),
 \]
 où $Skew_n$ désigne l'espace des matrices antisymétriques de taille $n\geq 2$.\\
-La forme étudiée est un ensemble de $N$ points repères. L'espace des formes est
+La forme étudiée est un ensemble de $N$ landmarks. L'espace des formes est
 \[
 Q={(\mathbb{R}^n)}^N,
 \]
@@ -1160,12 +1124,12 @@ Soit $p\in T_{q}^*Q={(\mathbb{R}^n)}^N$ et $\delta q\in T_{q}Q={(\mathbb{R}^n)}^
 (p\mid\delta q)=\left\langle p,\delta q\right\rangle=p^{\top}\delta q.
 \]
 \begin{remark}
-Cette identification de $T_{q}^*Q$ avec $T_{q}Q$ est spécifique au cas des points repères, où l'espace des formes est de dimension finie. C'est précisément cette propriété qui rend le problème plus simple que le modèle LDDMM complet, dans lequel l'espace des formes est de dimension infinie.
+Cette identification de $T_{q}^*Q$ avec $T_{q}Q$ est spécifique au cas des nuages de points.
 \end{remark}
 
 
 \section{Hamiltonien sur \texorpdfstring{$SO(n)$}{SO (n)}}
-Reprenons le Hamiltonien de contrôle introduit au \textbf{Chapitre~\ref{chap:LDDMM}}. Le contrôle est ici la matrice antisymétrique $A\in V=Skew_n$, et l'action du champ de vecteurs sur la forme est donnée par la multiplication matricielle $A\cdot q=Aq$. Le Hamiltonien s'écrit
+Reprenons le Hamiltonien introduit au \textbf{Chapitre~\ref{chap:LDDMM}}. Le contrôle est ici la matrice antisymétrique $A\in V=Skew_n$, et l'action du champ de vecteurs sur la forme est donnée par la multiplication matricielle $A\cdot q=Aq$. Le Hamiltonien s'écrit
 \[
 \begin{aligned}
 H\colon T^*Q\times V&\longrightarrow\mathbb{R}\\
@@ -1194,13 +1158,11 @@ Le principe du maximum de Pontryagin~\cite{Zib21} impose que le contrôle optima
 \[
 \begin{aligned}
 \dot q_t&=\partial_p H(q_t,p_t,A_t),\\
-\dot p_t&=-\partial_q H(q_t,p_t,A_t).
+\dot p_t&=-\partial_q H(q_t,p_t,A_t),\\
+0&=\partial_A H(q,p,A).
 \end{aligned}
 \]
-La condition pour optimiser $A$ et obtenir le Hamiltonien réduit se trouve en annulant la dérivée du Hamiltonien par rapport à $A$. En effet, $H$ étant strictement concave en $v$, l'annulation de la dérivée caractérise le maximum:
-\[
-\partial_A H(q,p,A)=0.
-\]
+La condition pour optimiser $A$ et obtenir le Hamiltonien réduit se trouve en annulant la dérivée du Hamiltonien par rapport à $A$. En effet, $H$ étant strictement concave en $v$, l'annulation de la dérivée caractérise le maximum.
 
 \subsubsection{Calculons cette différentielle}
 Le premier terme $p^{\top}(Aq)$ est linéaire en $A$, il s'écrit
@@ -1267,7 +1229,7 @@ Le problème de contrôle optimal se ramène ainsi à un système d'équations d
 \end{aligned}
 \]
 \begin{remark}
-Sur le groupe des difféomorphismes, on aurait $G=\mathrm{Diff}(\mathbb{R}^n)$ et $\mathfrak{g}=C_0^k(\mathbb{R}^n,\mathbb{R}^n)$, un espace de dimension infinie. Ici, dans le cas des points repères, on a $p\in T^*Q$ avec $\dim(T^*Q)=\dim(Q)=nN$ fini. L'optimisation ne porte plus sur le champ de vitesse en dimension infinie, mais uniquement sur le moment initial $p_0$, un objet de dimension finie.
+Sur le groupe des difféomorphismes, on aurait $G=\mathrm{Diff}(\mathbb{R}^n)$ et $\mathfrak{g}=C_0^k(\mathbb{R}^n,\mathbb{R}^n)$, un espace de dimension infinie. Ici, dans le cas des nuages de points, on a $p\in T^*Q$ avec $\dim(T^*Q)=\dim(Q)=nN$ fini. L'optimisation ne porte plus sur le champ de vitesse en dimension infinie, mais uniquement sur le moment initial $p_0$, un objet de dimension finie.
 \end{remark}
 
 
@@ -1354,14 +1316,14 @@ En effectuant le produit matriciel et en utilisant les formules d'addition du si
 \[
 R(t)=\begin{pmatrix}\cos(\theta_0+\omega t) & -\sin(\theta_0+\omega t) \\\sin(\theta_0+\omega t) & \cos(\theta_0+\omega t)\end{pmatrix}.~(*)
 \]
-Ainsi, la solution est une rotation dont l'angle évolue linéairement avec le temps.
+Ainsi, la solution est une rotation dont l'angle évolue linéairement avec le temps si $\theta_0=0$.
 
 \subsubsection{Application au modèle de recalage.}
 
-Soit $x_S$ notre forme source et $x_T$ notre forme cible. Rappelons notre équation de minimisation dans le cas général~\cite{Pol18} pour $I_0$ la forme source et $I_1$ la forme cible:
+Soit $x_S$ notre forme source et $x_T$ notre forme cible. Rappelons notre équation de minimisation dans le cas général~\cite{Pol18} pour $q_S$ la forme source et $q_T$ la forme cible:
 \[
 \begin{aligned}
-\min_{v\in L^2([0,1],V)}~&J(v)=\frac{1}{2}\int_{0}^{1}\|v_t\|_{V}^2\,dt+\|I_0\circ\varphi_1^{-1}-I_1\|\\
+\min_{v\in L^2([0,1],V)}~&J(v)=\frac{1}{2}\int_{0}^{1}\|v_t\|_{V}^2\,dt+\|\varphi_1\cdot q_S-q_T\|\\
 &\text{tel que }\left\{\begin{array}{ll}\dot{\varphi}_t=v_t\circ\varphi_t\\\varphi_0=Id\end{array}\right.
 \end{aligned}
 \]
@@ -1411,7 +1373,7 @@ Soit $R$ une matrice de $SO(3)$, alors cette matrice est semblable (par conjugai
 \[
 \begin{pmatrix}1 &0 &0\\ 0 &\cos(\theta) &-\sin(\theta)\\ 0 &\sin(\theta) &\cos(\theta)\end{pmatrix},\qquad\text{avec }\theta\in\mathbb{R}
 \]
-c'est-à-dire, il existe une matrice $P$ inversible et un réel $\theta$ vérifiant
+c'est-à-dire, il existe une matrice $P$ orthogonale et un réel $\theta$ vérifiant
 \[
 R=P\begin{pmatrix}1 &0 &0\\ 0 &\cos(\theta) &-\sin(\theta)\\ 0 &\sin(\theta) &\cos(\theta)\end{pmatrix}P^{-1}.
 \]
@@ -1580,10 +1542,10 @@ La descente de gradient peut être réalisée à l'aide de l'algorithme \texttt{
 
 \subsection{Recalage rigide sur \texorpdfstring{$SO(2)$}{SO (2)}}
 
-On souhaite toujours minimiser le problème suivant:
+On souhaite toujours minimiser le problème suivant pour les landmarks:
 \[
 \begin{aligned}
-\min_{v\in L^2([0,1],V)}~&J(v)=\frac{1}{2}\int_{0}^{1}\|v_t\|_{V}^2\,dt+\|I_0\circ\varphi_1^{-1}-I_1\|\\
+\min_{v\in L^2([0,1],V)}~&J(v)=\frac{1}{2}\int_{0}^{1}\|v_t\|_{V}^2\,dt+\|\varphi_1\cdot q_S-q_T\|\\
 &\text{tel que }\left\{\begin{array}{ll}\dot{\varphi}_t=v_t\circ\varphi_t\\\varphi_0=Id\end{array}\right.
 \end{aligned}
 \]
@@ -1597,7 +1559,7 @@ A(\omega)=\begin{pmatrix}0 & -\omega \\\omega & 0\end{pmatrix}\in \mathfrak{so}(
 \]
 Le paramètre \(\omega \in \mathbb{R}\) est la vitesse angulaire.
 
-On retrouve alors le problème présenté dans le chapitre~\textbf{\ref{chap:SO2-SO3}~Cas particuliers de \(SO(2)\) et \(SO(3)\)}, avec $x_S$ notre forme source et $x_T$ notre forme cible:
+On retrouve alors le problème présenté dans le chapitre~\textbf{\ref{chap:SO2-SO3}~Cas particuliers de \(SO(2)\) et \(SO(3)\)}, avec les landmarks, $x_S$ notre forme source et $x_T$ notre forme cible:
 \[
 \begin{aligned}
 \min_{\omega\in \mathbb{R}}&~J(\omega)=\frac{1}{2}|\omega|^2+\|x_1(\omega)-x_T\|\\
@@ -1750,9 +1712,9 @@ La \texttt{Figure~(\ref{fig:RecalageRotationCoq2et3})} présente deux cas où la
 
 
 \section{Approche hamiltonienne~- Tir géodésique}\label{sec:tir-hamiltonien}
-On reprend maintenant la formulation hamiltonienne établie au \textbf{Chapitre~\ref{chap:Hamiltonien}} dans le cas de $N$ points repères pour faire un algorithme de résolution par \emph{tir géodésique} (\textit{geodesic shooting})~\cite{MTT06}, où la seule variable d'optimisation est le moment initial.
+On reprend maintenant la formulation hamiltonienne établie au \textbf{Chapitre~\ref{chap:Hamiltonien}} dans le cas de $N$ landmarks pour faire un algorithme de résolution par \emph{tir géodésique} (\textit{geodesic shooting})~\cite{MTT06}, où la seule variable d'optimisation est le moment initial.
 
-\begin{proposition}[Équations géodésiques pour les points repères sous $SO(n)$]\label{prop:geodesique-points-reperes}\leavevmode\\
+\begin{proposition}[Équations géodésiques pour les nuages de points sous $SO(n)$]\label{prop:geodesique-points-reperes}\leavevmode\\
 Les trajectoires optimales $(q_t,p_t)\in T^*Q$ du problème de recalage restreint à $SO(n)$ vues précédemment dans le \texttt{Chapitre~\ref{chap:Hamiltonien}} sont solutions de
 \[
 \begin{aligned}
@@ -1836,7 +1798,7 @@ t_{\text{Hamiltonien}} \approx 0.91\,\text{s}, \qquad t_{\text{Scalaire}} \appro
   \includegraphics[width=0.48\textwidth]{../Images/DirectVsHamiltonian.png}
   \caption{Comparaison des temps d'exécution sur la rotation de la \texttt{Figure~\ref{fig:RecalageRotationSO2}}}
 \end{figure}
-L'approche scalaire est ici environ $1{,}6$ fois plus rapide que l'approche hamiltonienne. Cet écart s'explique par le nombre de variables intégrées à chaque pas de temps: l'approche directe ne propage que la position $x_t$, tandis que l'approche hamiltonienne propage simultanément la position $x_t$ \emph{et} le moment $p_t$, ce qui double la quantité de calcul à chaque itération d'Euler tout en recalculant $A^*_t$ à partir des deux tenseurs courants. En contrepartie, rappelons que l'approche hamiltonienne optimise un vecteur $p_0$ de même dimension que les points repères, ce qui la rend directement généralisable à des dynamiques bien plus riches (comme $SO(3)$ ou le cadre LDDMM général avec les difféomorphismes en dimension infinie), là où l'approche scalaire directe repose spécifiquement sur la paramétrisation par un angle $\omega$ propre à $SO(2)$.
+L'approche scalaire est ici environ $1{,}6$ fois plus rapide que l'approche hamiltonienne. Cet écart s'explique par le nombre de variables intégrées à chaque pas de temps: l'approche directe ne propage que la position $x_t$, tandis que l'approche hamiltonienne propage simultanément la position $x_t$ \emph{et} le moment $p_t$, ce qui double la quantité de calcul à chaque itération d'Euler tout en recalculant $A^*_t$ à partir des deux tenseurs courants. En contrepartie, rappelons que l'approche hamiltonienne optimise un vecteur $p_0$ de même dimension que les nuages de points, ce qui la rend directement généralisable à des dynamiques bien plus riches (comme $SO(3)$ ou le cadre LDDMM général avec les difféomorphismes en dimension infinie), là où l'approche scalaire directe repose spécifiquement sur la paramétrisation par un angle $\omega$ propre à $SO(2)$.
 \end{exemple}
 
 
@@ -1844,13 +1806,13 @@ L'approche scalaire est ici environ $1{,}6$ fois plus rapide que l'approche hami
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
 
-Ce stage a permis d'étudier un cas particulier du recalage de formes dans lequel les transformations sont restreintes aux rotations. Après avoir rappelé le cadre général LDDMM, nous avons décrit le groupe de Lie $SO(n)$, son algèbre de Lie $\mathfrak{so}(n)$ et le rôle de l'application exponentielle pour les rotations finies.
+Ce stage a permis d'étudier un cas particulier du recalage de formes dans lequel les transformations sont restreintes aux rotations. Après avoir rappelé le cadre général LDDMM, nous avons décrit le groupe de Lie $SO(n)$, son algèbre de Lie $\mathfrak{so}(n)$ et le rôle de l'application exponentielle pour les rotations.
 
 La formulation hamiltonienne a constitué l'une des notions les plus challengeantes de ce travail. Le fait de comprendre que la recherche d'un champ de vitesse pouvait se ramener à l'intégration d'équations géodésiques dont la seule inconnue est le moment initial a permis d'appréhender concrètement l'intérêt du principe du maximum de Pontryagin. Les études des cas $SO(2)$ et $SO(3)$ ont rendu ces concepts plus clairs, notamment à travers les formulations simples du problème de minimisation en fonction d'un unique scalaire ou vecteur.
 
 D'un point de vue algorithmique: les deux implémentations, l'approche directe et le tir géodésique, ont confirmé l'efficacité du modèle lorsque la transformation est une rotation rigide, en mettant aussi en évidence ses limites quand on se restreint à ces transformations ``simples''. Dès qu'interviennent des déformations non rigides, la restriction à $SO(n)$ ne permet plus de représenter correctement les transformations. Ce travail met ainsi en lumière un compromis entre la rapidité de l'approche directe et la généralité de l'approche hamiltonienne.
 
-Plusieurs prolongements naturels sont possibles, notamment l'abandon de la limitation aux rotations afin de se rapprocher du modèle LDDMM complet, ou encore l'extension aux formes plus riches que les simples points repères. Au-delà de ces perspectives, ce stage a surtout constitué une occasion de mettre en pratique les outils d'algèbre et d'équa-diff, vu en cours théorique, dans un contexte appliqué. Il a aussi ouvert des portes sur des zones des mathématiques pas étudiées en $2^{\text{ème}}$ année de licence.
+Plusieurs prolongements naturels sont possibles, notamment l'abandon de la limitation aux rotations afin de se rapprocher du modèle LDDMM complet, ou encore l'extension aux formes plus riches que les simples landmarks. Au-delà de ces perspectives, ce stage a surtout constitué une occasion de mettre en pratique les outils d'algèbre et d'équa-diff, vu en cours théorique, dans un contexte appliqué. Il a aussi ouvert des portes sur des domaines des mathématiques pas étudiées en $2^{\text{ème}}$ année de licence.
 
 
 % -= BIBLIOGRAPHIE =-
