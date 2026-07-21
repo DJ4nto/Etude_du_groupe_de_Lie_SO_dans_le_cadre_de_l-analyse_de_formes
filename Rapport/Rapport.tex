@@ -174,7 +174,7 @@ H_r(q,p)=H(q,p,v^*(q,p)).
 Cette réduction permet de transformer le problème de contrôle optimal qui est en dimension infinie en un système d'équations différentielles sur $T^*Q$ qui est un problème en dimension finie.
 
 \subsection{Équations géodésiques}
-Les trajectoires optimales, aussi appelées géodésiques, sont alors données par les équations géodésiques (appelées aussi équations hamiltoniennes).
+Les candidats à l'optimalité sont les géodésiques, c'est-à-dire des trajectoires satisfaisant les équations hamiltoniennes suivantes:
 \[
 \dot q_t = \partial_p H_r(q_t,p_t),
 \]
@@ -368,15 +368,39 @@ or $X^{\top}X=I_n$ et $Y^{\top}=Y$, donc
 Df(X)\frac{1}{2}XY=\frac{1}{2}I_{n}Y+\frac{1}{2}YI_n=Y.
 \]
 On a trouvé pour n'importe quel $Y$, qu'il y a un antécédent $H$. Ainsi, $Df$ est surjective et donc $O(n)$ est bien une sous-variété de l'espace $\mathcal{M}_n(\mathbb{R})$ (par le \textit{Théorème de submersion~\ref{thm:submersion}}).\\
-Posons $U=\{A\in \mathcal{M}_n(\mathbb{R})~|~\det{A}>0\}$ un ouvert (le déterminant est continu et $U$ est l'image réciproque d'un ouvert par le déterminant).\\
-L'intersection d'une sous-variété avec un ouvert de l'espace ambiant est encore une sous-variété. Comme $SO(n)=O(n)\cap U$, alors \underline{$SO(n)$ est une sous-variété}.
-\end{proof}
-
-\begin{remark}
-$SO(n)$ hérite aussi localement de toutes les propriétés de $O(n)$, comme sa dimension ou encore son espace tangent.
+Posons $U=\left\{A\in\mathcal{M}_n(\mathbb{R})\mid \det(A)>0\right\}$. Comme le déterminant est continu, $U$ est un ouvert de $\mathcal{M}_n(\mathbb{R})$. Or l'intersection d'une sous-variété avec un ouvert de l'espace ambiant est encore une sous-variété. Puisque
+\[
+SO(n)=O(n)\cap U,
+\]
+on en déduit que $SO(n)$ est une sous-variété de $\mathcal{M}_n(\mathbb{R})$.\\
+Enfin, la structure de groupe de $SO(n)$ est compatible avec sa structure différentielle. En effet, l'application
 \[
 \begin{aligned}
-\dim(SO(n))&=\dim(\textit{Espace de départ})-\dim(\textit{Espace d'arrivée})\\
+\mu\colon SO(n)\times SO(n)&\longrightarrow SO(n),\\
+(M,N)&\longmapsto MN^{-1}
+\end{aligned}
+\]
+est lisse. Pour tout $N\in SO(n)$, on a $N^{-1}=N^\top$. Ainsi,
+\[
+\mu(M,N)=MN^\top.
+\]
+La transposition étant linéaire et la multiplication matricielle étant bilinéaire, ces deux opérations sont lisses. Par conséquent, $\mu$ est lisse. On a \underline{$SO(n)$ est un groupe de Lie}.
+\end{proof}
+
+\begin{remark}\label{rq:dim/tang}
+Comme $SO(n)=O(n)\cap\{A\in\mathcal M_n(\mathbb R)\mid \det(A)>0\}$, le groupe $SO(n)$ est un ouvert de la variété $O(n)$. Il possède donc la même dimension que $O(n)$ et, en chaque point $X\in SO(n)$, le même espace tangent.\\
+Par ailleurs, $O(n)=f^{-1}(I_n)$, où
+\[
+\begin{aligned}
+f:\mathcal M_n(\mathbb R)&\longrightarrow\mathcal S_n(\mathbb R)\\
+X&\longmapsto X^\top X
+\end{aligned}
+\]
+Comme $I_n$ est une valeur régulière de $f$, le théorème des valeurs régulières donne
+\[
+\begin{aligned}
+\dim SO(n)&=\dim O(n)\\
+&=\dim\mathcal M_n(\mathbb R)-\dim\mathcal S_n(\mathbb R)\\
 &=n^2-\frac{n(n+1)}{2}\\
 &=\frac{n(n-1)}{2}
 \end{aligned}
@@ -439,8 +463,8 @@ Ainsi, les colonnes de $R$ sont celles de l'identité, donc $R=I_n$.~\underline{
 
 L'action de $SO(n)$ dans $\mathbb{R}^n$ n'est \textbf{pas libre}:\\
 Si l'action est libre, alors pour tout $x\in \mathbb{R}^n$, si $x\neq 0$ et $R\neq I_n$ alors $Rx\neq x$.\\
-Le cas pour $n=2$ est trivial, posons $n\geq3$.\\
-Prenons $R=\begin{pmatrix} 1 & 0 \\ 0 & S \end{pmatrix}$ une matrice par bloc de $SO(n)$ où $S\in SO(n-1)$ différente de l'identité et $x=(1,0,\dots ,0)$.\\
+Pour $n=2$, cette action est libre: une rotation plane qui fixe un vecteur non nul est nécessairement l'identité.\\
+En revanche, pour $n\geq3$. Prenons $R=\begin{pmatrix} 1 & 0 \\ 0 & S \end{pmatrix}$ une matrice par bloc de $SO(n)$ où $S\in SO(n-1)$ différente de l'identité et $x=(1,0,\dots ,0)$.\\
 Alors $u(R,x)=Rx=x$ car $x$ est dans la direction de la première colonne de $R$.\\
 Donc \underline{l'action de $SO(n)$ dans $\mathbb{R}^n$ n'est pas libre}.\\
 
@@ -573,7 +597,7 @@ f \colon \mathcal{M}_n(\mathbb{R}) &\longrightarrow \mathbb{R}~&g \colon \mathca
 X &\longmapsto \det(X)&X &\longmapsto X^{\top}X
 \end{aligned}
 \]
-On pose $\{1\}\subset\mathbb{R}$ et $\{Id\}\subset\mathcal{M}_n(\mathbb{R})$, deux fermés (car ce sont des singletons).\\
+On pose $\{1\}\subset\mathbb{R}$ et $\{I_n\}\subset\mathcal{M}_n(\mathbb{R})$, deux fermés (car ce sont des singletons).\\
 Alors $SO(n)=f^{-1}(\{1\})\cap g^{-1}(\{I_n\})$, comme l'intersection de deux fermés (images réciproques de fermés par des applications continues).
 Ainsi \underline{$SO(n)$ est fermé}.\\
 
@@ -646,16 +670,6 @@ et qui satisfait l'identité de Jacobi:
 \]
 \end{definition}
 
-\begin{definition} [Crochet de Lie dans $\mathfrak{so}(n)$]\leavevmode\\
-Le commutateur de $\mathfrak{so}(n)$ est, pour $A,B\in\mathfrak{so}(n)$:
-\[
-\begin{aligned}
-(\relax[\cdot,\cdot]) : \mathfrak{g} \times \mathfrak{g} &\to \mathfrak{g}\\
-(A,B) &\mapsto  AB-BA
-\end{aligned}
-\]
-\end{definition}
-
 \begin{proposition}\label{prop:so(n)=o(n)}
 Les algèbres de Lie des groupes $SO(n)$ et $O(n)$ coïncident:
 \[
@@ -668,7 +682,7 @@ Montrons par double inclusion:
 
 $\mathfrak{so}(n)\subset \mathfrak{o}(n)$: Comme $SO(n)\subset O(n)$, tout vecteur tangent à $SO(n)$ en l'identité est aussi tangent à $O(n)$.
 \[
-T_{Id}SO(n)\subset T_{Id}O(n),~\text{donc}~\mathfrak{so}(n)\subset \mathfrak{o}(n).
+T_{I_n}SO(n)\subset T_{I_n}O(n),~\text{donc}~\mathfrak{so}(n)\subset \mathfrak{o}(n).
 \]
 
 $\mathfrak{so}(n)\supset \mathfrak{o}(n)$: On utilise le fait que $SO(n)$ est la composante connexe de l'identité dans $O(n)$~(\ref{prop:SO-connexe-arcs}).\\
@@ -678,7 +692,7 @@ Finalement, on a \underline{$\mathfrak{so}(n)=\mathfrak{o}(n)$}.
 \end{proof}
 
 \begin{proposition}
-$T_{Id}SO(n)=\{H\in \mathcal{M}_n(\mathbb{R})~|~H^{\top}=-H\}$ est l'algèbre de Lie de $SO(n)$, plus précisément: $\mathfrak{so}(n)=T_{Id}SO(n)$.
+$T_{I_n}SO(n)=\{H\in \mathcal{M}_n(\mathbb{R})~|~H^{\top}=-H\}$ est l'algèbre de Lie de $SO(n)$, plus précisément: $\mathfrak{so}(n)=T_{I_n}SO(n)$.
 \end{proposition}
 
 \begin{proof}
@@ -695,11 +709,23 @@ Df(X)H=X^{\top}H+H^{\top}X.
 \]
 On l'évalue en l'identité
 \[
-Df(Id)H=I_n^{\top}H+H^{\top}I_n=H+H^{\top}.
+Df(I_n)H=I_n^{\top}H+H^{\top}I_n=H+H^{\top}.
+\]
+Et comme
+\[
+O(n)=f^{-1}(I_n)
+\]
+et que $I_n$ est une valeur régulière de $f$, le théorème des valeurs régulières donne, pour tout $X\in O(n)$,
+\[
+T_{X}O(n)=\ker(Df(X)).
+\]
+Par~(\ref{rq:dim/tang}), on a
+\[
+T_{I_n}SO(n)=T_{I_n}O(n)=\ker Df(I_n).
 \]
 Enfin,
 \[
-T_{Id}SO(n)=\ker(Df(Id))=\{H\in\mathcal{M}_n(\mathbb{R})~|~H^{\top}=-H\}
+T_{I_n}SO(n)=\ker(Df(I_n))=\{H\in\mathcal{M}_n(\mathbb{R})~|~H^{\top}=-H\}
 \]
 Par définition, l'algèbre de Lie de $SO(n)$ est l'espace tangent en l'identité.\\
 Ainsi, l'algèbre de Lie du groupe des rotations de dimension $n$ est l'ensemble des matrices antisymétriques.
@@ -707,6 +733,16 @@ Ainsi, l'algèbre de Lie du groupe des rotations de dimension $n$ est l'ensemble
 \mathfrak{so}(n)=\{H\in\mathcal{M}_n(\mathbb{R})~|~H^{\top}=-H\}
 \]
 \end{proof}
+
+\begin{definition} [Crochet de Lie dans $\mathfrak{so}(n)$]\leavevmode\\
+Le commutateur de $\mathfrak{so}(n)$ est, pour $A,B\in\mathfrak{so}(n)$:
+\[
+\begin{aligned}
+(\relax[\cdot,\cdot]) : \mathfrak{g} \times \mathfrak{g} &\to \mathfrak{g}\\
+(A,B) &\mapsto  AB-BA
+\end{aligned}
+\]
+\end{definition}
 
 \begin{proposition}
 Si $A,B\in \mathfrak{so}(n)$, Alors $[A,B]\in\mathfrak{so}(n)$
@@ -757,7 +793,7 @@ Par produit lisse (car c'est une application polynomiale en les coefficients), o
 \end{proof}
 
 \begin{proposition}\label{prop:Tangent-isomorphe}
-L'espace $T_{M}SO(n)$ est isomorphe à $T_{Id}SO(n)$ pour tout $M\in SO(n)$
+L'espace $T_{M}SO(n)$ est isomorphe à $T_{I_n}SO(n)$ pour tout $M\in SO(n)$
 \end{proposition}
 
 \begin{proof}
@@ -768,21 +804,26 @@ R_M : SO(n) &\longrightarrow SO(n)\\
 X &\longmapsto XM
 \end{aligned}
 \]
-Cette application est lisse~(\ref{prop:translation-lisse}), et son inverse est $R_{M^{-1}}$. Ainsi, $R_M$ est un difféomorphisme de $SO(n)$.\\
+Cette application est lisse~(\ref{prop:translation-lisse}), et son inverse $R_{M^{-1}}$ est lisse. Ainsi, $R_M$ est un difféomorphisme de $SO(n)$.\\
 En particulier, sa différentielle en tout point est un isomorphisme linéaire. En évaluant en l'identité, on obtient
 \[
-T_{Id}R_M : T_{Id}SO(n) \longrightarrow T_M SO(n),
+{(dR_M)}_{I_n} : T_{I_n}SO(n) \longrightarrow T_M SO(n),
 \]
 qui est un isomorphisme.
 Son inverse est donné par
 \[
-T_M R_{M^{-1}} : T_M SO(n) \longrightarrow T_{Id}SO(n),
+{(dR_{M^{-1}})}_{M} : T_M SO(n) \longrightarrow T_{I_n}SO(n),
 \]
 et par théorème de dérivation des fonctions composées, on a
 \[
-T_M R_{M^{-1}} \circ T_{Id}R_M=T_{Id}(R_{M^{-1}} \circ R_M)=\mathrm{Id}_{T_{Id}SO(n)}.
+\begin{aligned}
+{(dR_{M^{-1}})}_M\circ{(dR_M)}_{I_n}
+&=d{(R_{M^{-1}}\circ R_M)}_{I_n}\\
+&=d{(\operatorname{Id}_{SO(n)})}_{I_n}\\
+&=\operatorname{Id}_{T_{I_n}SO(n)}
+\end{aligned}
 \]
-On en déduit que $T_M SO(n)$ et $T_{Id}SO(n)$ sont isomorphes.
+On en déduit que $T_M SO(n)$ et $T_{I_n}SO(n)$ sont isomorphes.
 \end{proof}
 
 \begin{remark}
