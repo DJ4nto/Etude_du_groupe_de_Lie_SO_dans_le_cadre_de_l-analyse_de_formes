@@ -36,7 +36,7 @@ L'objectif du rapport est de présenter les outils théoriques: groupes de Lie, 
 % -= LDDMM =-
 \chapter{Le modèle de recalage LDDMM}\label{chap:LDDMM}
 
-Parmi les nombreuses approches de recalage, nous nous concentrerons sur le \emph{Large Deformation Diffeomorphic Metric Mapping}\footnote{Que l'on appellera LDDMM par la suite}. Sa force réside dans sa capacité à modéliser des déformations tout en garantissant que la transformation obtenue est un \emph{difféomorphisme}~- c'est-à-dire une application bijective, lisse et d'inverse lisse. Cette propriété est cruciale pour préserver la topologie des structures (anatomiques par exemple): des ensembles connexes restent connexes, des surfaces lisses restent lisses, et il n'y a pas de nouvelles pliures ou de déchirures. Le cadre de \emph{Large Deformation Diffeomorphic Metric Mapping} fournit une formulation variationnelle du problème de recalage, où la transformation recherchée est obtenue comme solution d'un problème de minimisation d'énergie.
+Parmi les nombreuses approches de recalage, nous nous concentrerons sur le \emph{Large Deformation Diffeomorphic Metric Mapping}\footnote{Que l'on appellera LDDMM par la suite}. Sa force réside dans sa capacité à modéliser des déformations tout en garantissant que la transformation obtenue est un \emph{difféomorphisme}~-- c'est-à-dire une application bijective, lisse et d'inverse lisse. Cette propriété est cruciale pour préserver la topologie des structures (anatomiques par exemple): des ensembles connexes restent connexes, des surfaces lisses restent lisses, et il n'y a pas de nouvelles pliures ou de déchirures. Le cadre de \emph{Large Deformation Diffeomorphic Metric Mapping} fournit une formulation variationnelle du problème de recalage, où la transformation recherchée est obtenue comme solution d'un problème de minimisation d'énergie.
 
 L'objectif de ce chapitre est de présenter le modèle LDDMM\@.
 
@@ -61,7 +61,7 @@ L'ensemble des difféomorphismes est un groupe, et la déformation à l'instant 
 \begin{itemize}
   \item \textbf{Nuage de points (Landmarks)}: Si $q_S=(x_1,\dots,x_N)\in{(\mathbb{R}^d)}^N$, l'action est l'évaluation ponctuelle: $\varphi\cdot q_S:=\varphi(q_S)$.
   \item \textbf{Courbes paramétrées}: Si $q\in\mathcal{C}^1(I;\mathbb{R}^d)$, l'action est la composition à gauche: $\varphi\cdot q:=\varphi\circ q$.
-  \item \textbf{Images}: Si $q_S d\in\mathcal{L}^2(\Omega,\mathbb{R})$, l'action est la composition avec l'inverse (pour préserver l'intensité): $\varphi\cdot q_S:=q_S\circ\varphi^{-1}$.
+  \item \textbf{Images}: Si $q_S\in\mathcal{L}^2(\Omega,\mathbb{R})$, l'action est la composition avec l'inverse (pour préserver l'intensité): $\varphi\cdot q_S:=q_S\circ\varphi^{-1}$.
 \end{itemize}
 
 \begin{exemple}\label{ex:recalage-rigide-coq}
@@ -910,7 +910,7 @@ La figure ci-dessous \texttt{Figure~(\ref{fig:espaces-tangents})} illustre ce pr
 % Exponentielle
 \section{L'application exponentielle}
 
-\begin{definition} [Exponentielle de matrice]\leavevmode\\
+\begin{definition} [Exponentielle de matrice]\label{def:exp-matrix}\leavevmode\\
 Soit $A\in \mathcal{M}_n(\mathbb{K})$ avec $\mathbb{K}=\mathbb{R}$ ou $\mathbb{C}$.  On appelle exponentielle de la matrice $A$, notée $e^A$, la somme de la série:
 \[
 e^{A}=\sum_{k=0}^{\infty}\frac{A^k}{k!}~,\qquad \exp(0)=I_n.
@@ -1085,22 +1085,15 @@ La solution de l'équation différentielle linéaire ci-dessus permet, à partir
 
 \section{Solution de \texorpdfstring{$\dot{x}(t)=Ax(t)$}{x.\ (t)=Ax (t)}}
 
-Pour garantir l'existence et l'unicité des trajectoires sur l'espace de forme, revenons au cas général avec le théorème suivant.
+Pour garantir l'existence et l'unicité des trajectoires sur l'espace de forme, revenons au cas général avec le théorème suivant. Soit $I$ un intervalle compact.
 
 \begin{theorem} [Théorème de Cauchy-Lipschitz]\label{thm:Cauchy-Lipschitz}\leavevmode\\
-Soient $\Omega$ un ouvert de $\mathbb{R} \times \mathbb{R}^d$ et $F\colon \Omega \longrightarrow\mathbb{R}^d$. Supposons que:
-\begin{itemize}
-  \item $F$ est continue sur $\Omega$.
-  \item $F$ est localement Lipschitzienne par rapport à $x$.
-\end{itemize}
-Alors, pour tout $(t_0,x_0)\in\Omega$, le problème de Cauchy:
+Soient $A\colon I\rightarrow\mathcal{M}_n(\mathbb{K})$ et $B\colon I\rightarrow\mathbb{K}^n$ deux fonctions continues.\\
+Alors $\forall t_0\in I$, le problème de Cauchy
 \[
-(E)\left\{\begin{array}{ll}
-Z'(t)=F(t,Z(t))\\
-Z(t_0)=x_0
-\end{array}\right.
+\left\{\begin{array}{ll}Y'=A(t)Y+B(t)\\ Y(t_0)=y_0\end{array}\right.
 \]
-admet une unique solution maximale $(J,x)$.
+admet une unique solution définie sur $I$ tout entier.
 \end{theorem}
 
 \begin{proof}
@@ -1146,7 +1139,8 @@ Avant de nous restreindre aux cas explicites $SO(2)$ et $SO(3)$, reprenons le ca
 
 
 \section{Espaces tangent et cotangent des nuages de points}
-Dans ce cadre, le champ de vecteurs $v_t$ n'est plus un difféomorphisme quelconque: il est engendré par une matrice antisymétrique. On travaille donc dans l'espace
+Dans ce cadre, on distingue le champ de vecteurs $v_t$ du flot de difféomorphismes $\varphi_t$ qu'il engendre. En effet, $v_t\in C_0^2(\mathbb{R}^n,\mathbb{R}^n)$ est le champ de vecteurs dépendant du temps. Dans le cadre général, on considère.\\
+On travaille donc dans l'espace
 \[
 V=Skew_n=\mathfrak{so}(n),
 \]
@@ -1241,9 +1235,10 @@ On obtient donc
 \[
 \nabla H(q,p,A)=pq^\top-A.
 \]
-Or \(A\) est contraint d'appartenir à \(Skew_n\). La condition s'écrit
+Par définition, le contrôle $A$ est contraint d'appartenir à l'algèbre de Lie $\mathfrak{so}(n)=Skew_n$.\\
+Les variations admissibles $K$ appartiennent donc également à $Skew_n$. La condition pour avoir le Hamiltonien stationnaire par rapport à $A$ s'écrit alors
 \[
-\langle pq^\top-A,H\rangle=0,\qquad \forall\,H\in Skew_n,
+\left\langle pq^\top-A,K\right\rangle=0,\qquad \forall\,K\in Skew_n.
 \]
 c'est-à-dire
 \[
@@ -1262,7 +1257,7 @@ On définit alors l'Hamiltonien réduit en remplaçant le contrôle optimal dans
 \[
 H_r(q,p)=H(q,p,A^*).
 \]
-Le problème de contrôle optimal se ramène ainsi à un système d'équations différentielles sur $T^*Q$, avec pour seule condition la donnée du moment initial $p_0$:
+Comme le Hamiltonien réduit $H_r$ ne dépend pas explicitement du temps, il est conservé le long des solutions des équations hamiltoniennes et le problème de contrôle optimal se ramène ainsi à un système d'équations différentielles sur $T^*Q$, avec pour seule condition la donnée du moment initial $p_0$:
 \[
 \begin{aligned}
 \min_{p_0\in T_{q_0}^*Q}~&\frac{1}{2}\int_{0}^{1}\|A_t\|_{V}^2\,dt+\|q_1-q_T\|\\
@@ -1337,6 +1332,26 @@ Sachant que $tA\in\mathfrak{so}(2)$, donc $e^{tA}\in SO(2)$ et $e^{tA}$ peut s'�
 \[
 e^{tA}=\begin{pmatrix}\cos\theta &-\sin\theta \\\sin\theta &\cos\theta\end{pmatrix},\text{ avec }\theta\in\mathbb{R}\text{ dépendant de }t.
 \]
+Posons
+\[
+J=\begin{pmatrix}0&-1\\1&0\end{pmatrix}.
+\]
+Alors $A=\omega J$ et $J^2=-I_2$.\\
+Par définition de l'exponentielle matricielle~(\ref{def:exp-matrix}),
+\[
+e^{tA}=\sum_{k=0}^{+\infty}\frac{{(tA)}^k}{k!}=\sum_{k=0}^{+\infty}\frac{{(\omega t)}^{k}J^k}{k!}.
+\]
+Comme
+\[
+J^{2k}={(-1)}^{k}I_2\qquad\text{et}\qquad J^{2k+1}={(-1)}^{k}J,
+\]
+on sépare les puissances paires et impaires:
+\[
+\begin{aligned}
+e^{tA}&=\sum_{k=0}^{+\infty}\frac{{(-1)}^k{(\omega t)}^{2k}}{(2k)!}I_2+\sum_{k=0}^{+\infty}\frac{{(-1)}^k{(\omega t)}^{2k+1}}{(2k+1)!}J\\
+&=\cos(\omega t)I_2+\sin(\omega t)J.
+\end{aligned}
+\]
 Après résolution, on trouve
 \[
 e^{tA}=\begin{pmatrix}\cos(\omega t) &-\sin(\omega t) \\\sin(\omega t) &\cos(\omega t)\end{pmatrix}.
@@ -1377,9 +1392,13 @@ Alors, on résout l'équation différentielle ci-dessus en utilisant la solution
 x(t)=R(t)x_S.
 \]
 On obtient ainsi une description explicite de l'évolution de la forme source sous l'action d'une rotation. Le résultat $x_1$ apparaît quand la rotation est totalement appliquée à notre forme source.\\
-Maintenant, regardons l'énergie cinétique dans le cas des rotations de dimension 2. Avec le produit matriciel en loi de composition, on retrouve naturellement
+Le champ de vecteurs associé à la rotation est donné par
 \[
-v_t=A_t,~A\in\mathfrak{so}(2).
+v_t(x)=A_{t}x, \qquad A_t\in\mathfrak{so}(2).
+\]
+En identifiant un champ de vecteurs linéaire à sa représentation matricielle, on notera par la suite
+\[
+v_t=A_t, \qquad A_t\in\mathfrak{so}(2).
 \]
 Ainsi, notre minimisation ressemble maintenant à ça (où $Skew_2$ désigne l'espace des matrices antisymétriques):
 \[
@@ -1426,7 +1445,18 @@ Considérons le polynôme caractéristique
 \[
 \chi(t)=\det(R-tI_3).
 \]
-C'est un polynôme de degré $3$, donc il admet au moins une racine réelle $\lambda$. Comme $R$ est une matrice orthogonale, toutes ses valeurs propres sont de module $1$, on obtient donc nécessairement $\lambda=1$.\\
+C'est un polynôme de degré $3$, donc il admet au moins une racine réelle $\lambda$. Comme $R$ est une matrice orthogonale, toutes ses valeurs propres sont de module $1$, on obtient donc nécessairement $\lambda\in\{-1,1\}$.\\
+Montrons que $1$ est nécessairement une valeur propre de $R$:\\
+Supposons, par l'absurde, que $1$ ne soit pas valeur propre. La valeur propre réelle $\lambda$ est alors égale à $-1$. Soit $e_1$ un vecteur propre unitaire associé à $\lambda=-1$. Puisque $u$ est orthogonal, le sous-espace $H=e_1^\perp$ est stable par $u$.\\
+Dans une base orthonormale adaptée à la décomposition $\mathbb R^3=\mathbb Re_1\oplus H$, la matrice de $u$ est de la forme
+\[
+\begin{pmatrix}-1&0\\0&A\end{pmatrix},\qquad \text{avec }A\in O(2).
+\]
+Comme $\det(R)=1$, on obtient
+\[
+1=\det(R)=-\det(A),
+\]
+donc $\det(A)=-1$. Or toute matrice de $O(2)$ de déterminant $-1$ admet $1$ comme valeur propre. Ainsi, $u$ admet également $1$ comme valeur propre, ce qui est contradictoire.\\
 Soit $e_1$ un vecteur unitaire associé à la valeur propre $1$. Le sous-espace
 \[
 H=e_1^\perp
