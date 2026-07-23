@@ -76,7 +76,7 @@ Voyons un exemple de recalage rigide avec une forme source $x_S$ et une autre fo
 
 
 \section{Espace des formes, tangent et cotangent}
-Dans la formulation géométrique du recalage, on considère un espace de champ de vecteurs $V\hookrightarrow C^{2}_{0}(\mathbb{R}^d,\mathbb{R}^d)$ et un espace de formes $Q$. Cet espace peut être, selon le problème étudié, un espace d'images, de courbes, de surfaces ou encore de nuage de points. Dans le cas des nuages de points, l'espace des formes est
+Dans la formulation géométrique du recalage, on considère un espace de champs de vecteurs $V\hookrightarrow C^{2}_{0}(\mathbb{R}^d,\mathbb{R}^d)$ et un espace de formes $Q$. Cet espace peut être, selon le problème étudié, un espace d'images, de courbes, de surfaces ou encore de nuages de points. Dans le cas des nuages de points, l'espace des formes est
 \[
 Q={(\mathbb{R}^d)}^N.
 \]
@@ -617,43 +617,50 @@ $SO(n)$ est un groupe connexe par arcs.
 \end{proposition}
 
 \begin{proof}
-On procède par récurrence sur $n \ge 1$ en utilisant l'action naturelle de $SO(n)$ sur la sphère $S^{n-1}\subset \mathbb{R}^n$.
+Le groupe $SO(n)$ est compact~(\ref{prop:SO-compact}) et c'est aussi une variété différentielle~(\ref{prop:SO-groupe-de-Lie}). Donc, il est donc localement connexe par arcs et possède un nombre finie de composantes connexes par arcs.\\
+Il ne reste plus qu'à prouver qu'il n'y a qu'une unique composante:\\
+Notons $C$ la composante connexe par arcs de l'identité $I_n$ dans $SO(n)$. Puisque $SO(n)$ est une variété différentielle, il existe $U$ un voisinage ouvert de $I_n$ qui est homéomorphe à un ouvert de $\mathbb{R}^{n(n-1)/2}$. On peut choisir $U$ connexe par arcs, de sorte que $U\subset C$.\\
+Par ailleurs, pour toute matrice $A\in SO(n)$, la translation à gauche
 \[
 \begin{aligned}
-u\colon SO(n)\times S^{n-1} &\longrightarrow S^{n-1}\\
-(A,x) &\longmapsto Ax
+L_A\colon SO(n)&\longrightarrow SO(n)\\
+M&\longmapsto AM
 \end{aligned}
 \]
-Pour $n = 1$, le groupe $SO(1) = \{1\}$ est un singleton, il est donc trivialement connexe par arcs.\\\\
-Vérifions que le fixateur du vecteur $e_n ={(0,\dots,0,1)}^{\top}$ s'identifie à $SO(n-1)$.\\
-Une matrice $A \in SO(n)$ vérifie $Ae_n = e_n$ si et seulement si sa dernière colonne est $e_n$. Étant orthogonale, ses lignes et colonnes forment des familles orthonormées, ce qui impose à $A$ d'avoir une structure de bloc de la forme:
+est un homéomorphisme. Elle envoie donc la composante $C$ de $I_n$ sur la composante $AC$ de $A$. En particulier, toutes les composantes connexes par arcs de $SO(n)$ sont ouvertes.\\
+Pour montrer qu'il n'existe qu'une seule composante, considérons $A\in SO(n)$. Puisque $A$ est une matrice orthogonale, il existe une matrice $P\in O(n)$ et des réels $\theta_1,\ldots,\theta_r$ tels que
 \[
-A = \begin{pmatrix} B & 0 \\ 0 & 1 \end{pmatrix}
+P^{\mathsf T}AP=\operatorname{diag}\bigl(R(\theta_1),\ldots,R(\theta_r),1,\ldots,1\bigr),
 \]
-où $B \in \mathcal{M}_{n-1}(\mathbb{R})$. Les conditions $A^{\top}A=I_n$ et $\det(A)=1$ sont aussi vérifiées sur le bloc $B$.\\
-Donc, $B \in SO(n-1)$. L'application $B \mapsto \begin{pmatrix} B & 0 \\ 0 & 1 \end{pmatrix}$ définit un isomorphisme qui permet d'identifier le fixateur de $e_n$ à $SO(n-1)$.\\\\
-Montrons que l'application $SO(n)/SO(n-1)\longrightarrow S^{n-1}$ ainsi obtenue est un homéomorphisme.\\
-L'action de $SO(n)$ sur $S^{n-1}$ est transitive pour tout $n \ge 2$ (tout vecteur unitaire peut être complété en une base orthonormée). L'application associée à $e_n$ est donc surjective:
+où
+\[
+R(\theta)=\begin{pmatrix}\cos(\theta)&-\sin(\theta)\\\sin(\theta)&\cos(\theta)\end{pmatrix}.
+\]
+En effet, les éventuels blocs $(-1)$ apparaissent en nombre pair, car $\det(A)=1$, et peuvent donc être regroupés deux à deux sous la forme
+\[
+\begin{pmatrix}-1&0\\0&-1\end{pmatrix}=R(\pi).
+\]
+Définissons alors l'application
 \[
 \begin{aligned}
-\varphi \colon SO(n) &\longrightarrow S^{n-1}\\
-\quad A &\longmapsto Ae_n
+\gamma\colon[0,1]&\longrightarrow SO(n)\\
+t&\longmapsto P\operatorname{diag}\bigl(R(t\theta_1),\ldots,R(t\theta_r),1,\ldots,1\bigr)P^{\mathsf T}
 \end{aligned}
 \]
-Par passage au quotient, $\varphi$ induit une bijection continue:
+Cette application est continue. De plus, chaque matrice $\gamma(t)$ est orthogonale et vérifie
 \[
-\varphi' \colon SO(n)/SO(n-1) \longrightarrow S^{n-1}
+\det\bigl(\gamma(t)\bigr)=1,
 \]
-Le groupe $SO(n)$ étant compact~(\ref{prop:SO-compact}), toute bijection continue d'un espace compact vers un espace séparé est un homéomorphisme.\\
-On en déduit que $SO(n)/SO(n-1) \simeq S^{n-1}$.\\\\
-Montrons que si $H$ est un sous-groupe fermé connexe de $G$, l'application quotient induit une bijection $\pi_0(G)\simeq \pi_0(G/H)$.\\
-En effet, soit $f \colon G \to \{0, 1\}$ une application continue. Pour tout $g \in G$, la restriction de $f$ à la classe $gH$ est continue. Comme $H$ est connexe, la fibre\footnote{En topologie, la fibre d'un point par une application désigne simplement sa préimage} $gH$ est connexe, donc $f$ est constante. Donc, $f$ passe au quotient en une application continue $\bar{f}$. Si $G/H$ est connexe, $\bar{f}$ est constante, impliquant que $f$ est constante sur $G$.\\
-$G$ est donc connexe.\\\\
-On en déduit la connexité de $SO(n)$ par récurrence.\\
-Supposons que $SO(n-1)$ est connexe. On applique l'égalité précédente à $G=SO(n)$ et $H=SO(n-1)$.\\
-Par hypothèse, $H$ est connexe. De plus, pour $n \ge 2$, l'espace quotient $SO(n)/SO(n-1) \simeq S^{n-1}$ est connexe.\\
-\underline{$SO(n)$ est donc connexe}.\\\\
-Et \underline{$SO(n)$ est connexe par arcs} car c'est une variété différentielle~(\ref{prop:SO-groupe-de-Lie}) localement connexe par arcs et compacte~(\ref{prop:SO-compact}).
+donc $\gamma(t)\in SO(n)$ pour tout $t\in[0,1]$. Enfin,
+\[
+\gamma(0)=I_n \qquad\text{et}\qquad \gamma(1)=A.
+\]
+Ainsi, toute matrice $A\in SO(n)$ appartient à la composante connexe par arcs $C$ de l'identité. On en déduit que
+\[
+C=SO(n).
+\]
+Par conséquent, $SO(n)$ ne possède qu'une seule composante connexe par arcs.\\
+Et \underline{$SO(n)$ est connexe par arcs}.
 \end{proof}
 
 
@@ -1814,7 +1821,7 @@ A^*_t=\frac12\left(p_t q_t^{\top}-q_t p_t^{\top}\right)\in\mathfrak{so}(n).
 
 \begin{proof}
 L'équation sur $q$ s'obtient directement en substituant le contrôle optimal $A^*$ dans la dynamique $\dot q_t=A_t{q}_t$.\\
-Pour l'équation sur $p$, on dérive le Hamiltonien réduit $H_r(q,p)=H(q,p,A^*(q,p))$ par rapport à $q$. Comme $A^*(q,p)$ maximise $H(q,p,\cdot)$ sur $\mathfrak{so}(n)$, la dérivée de $A^*$ par rapport à $q$ s'annule et il reste donc seulement $H$ exprimé en fonction de $q$:
+Pour l'équation sur $p$, on dérive le Hamiltonien réduit $H_r(q,p)=H(q,p,A^*(q,p))$ par rapport à $q$. Comme $A^*(q,p)$ maximise $H(q,p,\cdot)$ sur $\mathfrak{so}(n)$, la contribution de la dérivée de $A^*$ par rapport à $q$ disparait et il reste donc seulement $H$ exprimé en fonction de $q$:
 \[
 \partial_{q}H_r(q,p)=\partial_{q}H(q,p,A^*)={(A^*)}^{\top}p,
 \]
