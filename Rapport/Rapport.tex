@@ -26,7 +26,7 @@
 
 Ce rapport contient le travail réalisé pendant un stage consacré à l'étude mathématique et numérique d'un problème de recalage de formes. Le recalage consiste à déterminer une transformation permettant d'aligner une forme dite source sur une forme dite cible. Ce type de problème apparaît dans de nombreux domaines, par exemple en imagerie médicale ou encore en analyse morphologique.
 
-Le cadre général étudié durant ce stage est celui du \emph{Large Deformation Diffeomorphic Metric Mapping}, ou LDDMM~\cite{FMTY05}\cite{Pol18}\@. Cette approche sera détaillée dans le \textbf{Chapitre~\ref{chap:LDDMM}}. L'intérêt principal de cette méthode est de garantir que les transformations obtenues préservent la structure topologique des objets étudiés: il n'y a ni déchirure ni fusions de formes.
+Le cadre général étudié durant ce stage est celui du \emph{Large Deformation Diffeomorphic Metric Mapping}, ou LDDMM~\cite{FMTY05}\cite{Pol18}\@. Cette approche sera détaillée dans le \textbf{Chapitre~\ref{chap:LDDMM}}. L'intérêt principal de cette méthode est de garantir que les transformations obtenues préservent la structure topologique des objets étudiés: il n'y a ni déchirure ni fusion de formes.
 
 Le modèle LDDMM complet est mathématiquement et numériquement riche. Dans ce stage, nous avons choisi d'en étudier une restriction plus simple: le cas où les transformations admissibles considérées sont uniquement des rotations~\cite{Hol11}. Cette restriction conduit naturellement à l'étude du groupe spécial orthogonal $SO(n)$ et de son algèbre de Lie $\mathfrak{so}(n)$. On s'intéressera donc, dans un cadre en dimension finie, à comment on transporte des formes via une action de groupe.
 
@@ -100,7 +100,7 @@ L'élément $p\in T_q^*Q$ est appelé un covecteur. Dans le cadre hamiltonien, o
 
 
 \section{Problème variationnel LDDMM}
-Le problème de recalage qui consiste a trouver la meilleure déformation peut s'écrire comme un problème variationnel où l'on doit déterminer le champ de vitesse $v_t$ qui minimise une énergie composée de deux termes:
+Le problème de recalage qui consiste à trouver la meilleure déformation peut s'écrire comme un problème variationnel où l'on doit déterminer le champ de vitesse $v_t$ qui minimise une énergie composée de deux termes:
 
 \begin{itemize}
 \item Un terme de régularité contrôlant le ``coût'' de la déformation (à gauche de l'addition),
@@ -163,7 +163,7 @@ Le principe du maximum de Pontryagin~\cite{Zib21} impose que le contrôle optima
 \[
 \partial_v H(q,p,v)=0.
 \]
-On obtient ainsi un champ de vecteur optimal
+On obtient ainsi un champ de vecteurs optimal
 \[
 v^*=v^*(q,p).
 \]
@@ -449,7 +449,7 @@ La multiplication matricielle \underline{$u$ est une action de groupe}.
 \end{proof}
 
 \begin{proposition}
-L'action du groupe $SO(n)$ dans $\mathbb{R}^n$ est fidèle mais pas libre et pas transitive.
+L'action naturelle de $SO(n)$ sur $\mathbb R^n$ est fidèle, mais elle n'est ni libre ni transitive
 \end{proposition}
 
 \begin{proof}
@@ -463,10 +463,13 @@ Ainsi, les colonnes de $R$ sont celles de l'identité, donc $R=I_n$.~\underline{
 
 L'action de $SO(n)$ dans $\mathbb{R}^n$ n'est \textbf{pas libre}:\\
 Si l'action est libre, alors pour tout $x\in \mathbb{R}^n$, si $x\neq 0$ et $R\neq I_n$ alors $Rx\neq x$.\\
-Pour $n=2$, cette action est libre: une rotation plane qui fixe un vecteur non nul est nécessairement l'identité.\\
-En revanche, pour $n\geq3$. Prenons $R=\begin{pmatrix} 1 & 0 \\ 0 & S \end{pmatrix}$ une matrice par bloc de $SO(n)$ où $S\in SO(n-1)$ différente de l'identité et $x=(1,0,\dots ,0)$.\\
-Alors $u(R,x)=Rx=x$ car $x$ est dans la direction de la première colonne de $R$.\\
-Donc \underline{l'action de $SO(n)$ dans $\mathbb{R}^n$ n'est pas libre}.\\
+Elle n'est pas libre sur $\mathbb R^n$, puisque $R0=0$ pour tout $R\in SO(n)$.\\
+Sur $\mathbb R^2\setminus\{0\}$, si une rotation fixe un vecteur non nul, son angle est nul modulo $2\pi$, donc elle est égale à l'identité.\\
+En revanche, pour $n\geq3$, choisissons
+\[
+R=\begin{pmatrix}1&0\\0&S\end{pmatrix}, \qquad S\in SO(n-1),\quad S\neq I_{n-1}.
+\]
+Alors $R\neq I_n$ mais $Re_1=e_1$. Donc \underline{l'action de $SO(n)$ dans $\mathbb{R}^n$ n'est pas libre}.\\
 
 L'action de $SO(n)$ dans $\mathbb{R}^n$ n'est \textbf{pas transitive}:\\
 Si l'action est transitive, alors $\forall x,y\in \mathbb{R}^n, \exists R\in SO(n)$ tel que $u(R,x)=y$.\\
@@ -909,6 +912,7 @@ La figure ci-dessous \texttt{Figure~(\ref{fig:espaces-tangents})} illustre ce pr
 
 % Exponentielle
 \section{L'application exponentielle}
+L'application exponentielle joue un rôle fondamental dans l'étude des groupes de Lie car elle établit un lien entre l'algèbre de Lie $\mathfrak{g}=T_{e}G$ et le groupe de Lie $G$.
 
 \begin{definition} [Exponentielle de matrice]\label{def:exp-matrix}\leavevmode\\
 Soit $A\in \mathcal{M}_n(\mathbb{K})$ avec $\mathbb{K}=\mathbb{R}$ ou $\mathbb{C}$.  On appelle exponentielle de la matrice $A$, notée $e^A$, la somme de la série:
@@ -948,6 +952,8 @@ Or $A^{\top}=-A$,
 Ainsi, $e^A$ vérifie $\det(e^A)=1$ et ${(e^A)}^{\top}e^A=I_n$.\\
 On a bien \underline{$e^A\in SO(n)$}.
 \end{proof}
+
+Nous avons vu que, étant donné un vecteur $A\in\mathfrak{g}$, l'exponentielle permet de construire un élément $\exp(A)\in G$ (au moins dans le cas où $G=SO(n)$). L'exponentielle permet donc de passer d'une information infinitésimale, contenue dans l'espace tangent à l'identité, à une transformation appartenant au groupe. Dans le cas des rotations, elle associe à une matrice antisymétrique $A\in\mathfrak{so}(n)$ une matrice de rotation $e^A\in SO(n)$. Intéressons-nous au cas où $n=2$.
 
 \begin{exemple}
 Exemple d'exponentielle d'une matrice $2\times 2$ antisymétrique:\\
@@ -1021,66 +1027,73 @@ Ainsi, on retrouve que $e^A=R$, et donc que pour tout $R\in SO(n)$, il existe $A
 % -= Equa diff =-
 \chapter{Étude de l'équation différentielle linéaire \texorpdfstring{$\dot{x}(t)=Ax(t)$}{x.\ (t)=Ax (t)}}
 
-Dans ce chapitre, nous verrons comment cette équation différentielle linéaire apparaît naturellement sur le groupe spécial orthogonal $SO(n)$, l'importance de ce résultat, ainsi que sa résolution. Commençons avec le groupe de Lie $SO(n)$.
-
+Dans ce chapitre, nous verrons comment cette équation différentielle linéaire apparaît naturellement par l'action du groupe spécial orthogonal $SO(n)$ sur des landmarks de $\mathbb{R}^n$, l'importance de ce résultat, ainsi que sa résolution. Commençons avec le groupe de Lie $SO(n)$.
 
 \section{Obtenir l'équation différentielle \texorpdfstring{$\dot{x}(t)=Ax(t)$}{x.\ (t)=Ax (t)}}
 
-Cherchons à exprimer la différentielle de la translation à droite afin de lier le groupe $SO(n)$ à son algèbre de Lie. Remarquons une égalité que l'on utilisera juste après.
+Considérons des landmarks $x_i\in\mathbb{R}^n$ et l'action du groupe $SO(n)$ sur $\mathbb{R}^n$. Remarquons une égalité que l'on utilisera juste après.
 \begin{remark}\label{rq:id}
 On sait que $\forall X\in SO(n)\colon X^{\top}X=I_n$, et donc $X^{-1}=X^{\top}$.
 \end{remark}
+
 \subsubsection{Trouvons l'équation.}
-Prenons la translation à droite sur $SO(n)$ avec $M\in SO(n)$:
+Considérons une courbe différentiable à valeurs matricielles $M_t \in SO(n)$ et définissons la déformation d'un landmark $x_i$ par
+\[
+x_i(t)=M_{t}x_i.
+\]
+Différencions cette expression par rapport au temps,
+\[
+\dot{x}_i(t)=\dot{M}_{t}x_i.
+\]
+En posant $A(t) = \dot{M}_t{M_t}^{-1}$, on a $\dot{M}_t=A(t)M_t$. Montrons que $A(t)$ est antisymétrique: en dérivant l'identité~(\ref{rq:id}) ${M_t}^{\top}M_t=I_n$ par rapport au temps,
+\[
+{\dot{M}_t}^{\top}M_t+{M_t}^{\top}\dot{M}_t=0.
+\]
+Comme ${M_t}^{-1}={M_t}^{\top}$, on a $A(t)=\dot{M}_t{M_t}^{\top}$, et l'égalité ci-dessus donne $A{(t)}^{\top}+A(t)=0$. Ainsi $A(t) \in T_{I_n}SO(n) = \mathfrak{so}(n)$ (l'algèbre de Lie de $SO(n)$).\\
+On obtient alors
+\[
+\begin{aligned}
+\dot{x}_i(t)&=A(t)M_{t}x_i\\
+\dot{x}_i(t)&=A(t)x_i(t).
+\end{aligned}
+\]
+Donc si on suppose que ce vecteur est constant en fonction du temps $A(t)=A$, on retrouve
+\[
+\dot{x}_i(t)=Ax_i(t).
+\]
+
+\begin{remark}
+Cette construction peut également s'interpréter à l'aide de la translation à droite sur $SO(n)$. Pour $M\in SO(n)$:
 \[
 \begin{aligned}
 R_M\colon SO(n) &\longrightarrow SO(n)\\
 X&\longmapsto XM
 \end{aligned}
 \]
-Différencions cette application, soient $X\in SO(n)$ et $H\in \mathcal{M}_n(\mathbb{R})$
+Sa différentielle en $X\in SO(n)$ est
+\[
+\begin{aligned}
+{D(R_M)}_X\colon T_{X}SO(n) &\longrightarrow T_{XM}SO(n)\\
+H&\longmapsto HM.
+\end{aligned}
+\]
+En effet, pour $H\in \mathcal{M}_n(\mathbb{R})$,
 \[
 \begin{aligned}
 R_M(X+H)&=(X+H)M\\
 &=XM+HM\\
-&=R_M(X)+DR_M(X)H+o(\|H\|)
+&=R_M(X)+DR_M(X)H+o(\|H\|).
 \end{aligned}
 \]
-La différentielle de $R_M$ en $X$ est donc donnée par la partie linéaire en $H$,
-\[
-\begin{aligned}
-{D(R_M)}_X\colon T_{X}SO(n) &\longrightarrow T_{XM}SO(n)\\
-H&\longmapsto HM
-\end{aligned}
-\]
-Car
+Ainsi
 \[
 DR_M\colon SO(n) \longrightarrow \mathcal{L}(T_{X}SO(n),T_{XM}SO(n))
 \]
-est à valeurs dans les applications linéaires d'un espace tangent dans un autre, qui sont isomorphes~(\ref{prop:Tangent-isomorphe}).\\
-Considérons maintenant une courbe différentiable $x(t) \in SO(n)$,
-\[
-x(t)=M_{t}x_0
-\]
-que l'on différencie par rapport au temps,
-\[
-\dot{x}(t)=\dot{M}_{t}x_0.
-\]
-En posant $A(t) = \dot{x}(t){x(t)}^{-1}$, on a $\dot{x}(t)=A(t)x(t)$. Montrons que $A(t)$ est antisymétrique: en dérivant l'identité~(\ref{rq:id}) $x{(t)}^{\top}x(t)=I_n$ par rapport au temps,
-\[
-\dot{x}{(t)}^{\top}x(t)+x{(t)}^{\top}\dot{x}(t)=0.
-\]
-Comme $x{(t)}^{-1}=x{(t)}^{\top}$, on a $A(t)=\dot{x}(t)x{(t)}^{\top}$, et l'égalité ci-dessus donne $A{(t)}^{\top}+A(t)=0$. Ainsi $A(t) \in T_{I_n}SO(n) = \mathfrak{so}(n)$ (l'algèbre de Lie des matrices antisymétriques).\\
-Donc si on suppose que ce vecteur est constant en fonction du temps $A(t)=A$,
-\[
-\begin{aligned}
-\dot{x}(t)&=AM_{t}x_0\\
-\dot{x}(t)&=Ax(t)
-\end{aligned}
-\]
+est à valeurs dans les applications linéaires d'un espace tangent dans un autre, qui sont isomorphes~(\ref{prop:Tangent-isomorphe}).
+\end{remark}
 
 \begin{remark}
-La solution de l'équation différentielle linéaire ci-dessus permet, à partir d'un seul élément $A$ de l'algèbre de Lie $\mathfrak{so}(n)$, de créer un mouvement sur tout le groupe $SO(n)$ à partir d'applications de translations à droite.
+La solution de l'équation différentielle linéaire ci-dessus permet, à partir d'un seul élément $A$ de l'algèbre de Lie $\mathfrak{so}(n)$, de créer un mouvement sur tout le groupe $SO(n)$ et de déformer les landmarks par l'action de ce mouvement.
 \end{remark}
 
 \section{Solution de \texorpdfstring{$\dot{x}(t)=Ax(t)$}{x.\ (t)=Ax (t)}}
@@ -1502,7 +1515,7 @@ On a vu que la solution d'une équation différentielle linéaire de ce type est
 R(t)=e^{tA}R_0.
 \]
 Or l'exponentielle d'une matrice de $\mathfrak{so}(n)$ est à valeur dans $SO(n)$~(\ref{prop:ensemble-exp}).\\
-Contrairement au cas de $SO(2)$, on ne peut pas écrire $e^{tA}$ simplement car les matrices sur $SO(3)$ n'ont pas de formes simple. On va plutôt calculer avec les séries entières.\\
+Contrairement au cas de $SO(2)$, on n'utilisera pas une écriture simple de $e^{tA}$. On va plutôt calculer avec les séries entières.\\
 Notons
 \[
 \theta=\|\omega\|=\sqrt{\omega_1^2+\omega_2^2+\omega_3^2},
@@ -1722,7 +1735,7 @@ J(\omega^{(0)}) = 9.488581 \qquad &\rightarrow \qquad J(\omega^{(1)}) = 8.950083
   \includegraphics[width=0.48\textwidth]{../Images/RecalageRotationSO2_Etape1.png}
   \hfill
   \includegraphics[width=0.48\textwidth]{../Images/RecalageRotationSO2.png}
-  \caption{Première et $50^{\text{ième}}$ étape du recalage sur les rotations $SO(2)$.}\label{fig:RecalageRotationSO2}
+  \caption{Première et $50^{\text{e}}$ étape du recalage sur les rotations $SO(2)$.}\label{fig:RecalageRotationSO2}
 \end{figure}
 \end{exemple}
 
@@ -1748,7 +1761,7 @@ Dans la \texttt{Figure~(\ref{fig:RecalageRotationCoq1})}, on applique une rotati
   \caption{Recalage sur les rotations $SO(2)$ d'un coq.}\label{fig:RecalageRotationCoq1}
 \end{figure}
 
-La \texttt{Figure~(\ref{fig:RecalageRotationCoq2et3})} présente deux cas où la forme cible $x_T$ diffère de la forme source $x_S$ non seulement par une rotation, mais aussi par une déformation (des coqs légèrement différents séparés de $x_S$ par une transformation non rigide). Dans ces situations, le modèle restreint à $SO(2)$ montre ses limites: en cherchant uniquement une rotation optimale, l'algorithme ne peut pas capturer les déformations non rigides. La forme transformée $x_1$ ne coïncide alors que partiellement et voire même pas du tout avec la cible $x_T$, et le terme d'attache aux données $\|x_1-x_T\|$ reste élevé malgré la convergence de l'optimisation.
+La \texttt{Figure~(\ref{fig:RecalageRotationCoq2et3})} présente deux cas où la forme cible $x_T$ diffère de la forme source $x_S$ non seulement par une rotation, mais aussi par une déformation (des coqs légèrement différents séparés de $x_S$ par une transformation non rigide). Dans ces situations, le modèle restreint à $SO(2)$ montre ses limites: en cherchant uniquement une rotation optimale, l'algorithme ne peut pas capturer les déformations non rigides. La forme transformée $x_1$ ne coïncide alors que partiellement voire même pas du tout avec la cible $x_T$, et le terme d'attache aux données $\|x_1-x_T\|$ reste élevé malgré la convergence de l'optimisation.
 
 \begin{figure}[H]
   \centering
@@ -1801,7 +1814,7 @@ A^*_t=\frac12\left(p_t q_t^{\top}-q_t p_t^{\top}\right)\in\mathfrak{so}(n).
 
 \begin{proof}
 L'équation sur $q$ s'obtient directement en substituant le contrôle optimal $A^*$ dans la dynamique $\dot q_t=A_t{q}_t$.\\
-Pour l'équation sur $p$, on dérive le Hamiltonien réduit $H_r(q,p)=H(q,p,A^*(q,p))$ par rapport à $q$. Comme $A^*$ vérifie la condition d'optimalité $\partial_{A}H(q,p,A^*)=0$, la dérivée de $A^*$ par rapport à $q$ s'annule et il reste donc seulement $H$ exprimé en fonction de $q$:
+Pour l'équation sur $p$, on dérive le Hamiltonien réduit $H_r(q,p)=H(q,p,A^*(q,p))$ par rapport à $q$. Comme $A^*(q,p)$ maximise $H(q,p,\cdot)$ sur $\mathfrak{so}(n)$, la dérivée de $A^*$ par rapport à $q$ s'annule et il reste donc seulement $H$ exprimé en fonction de $q$:
 \[
 \partial_{q}H_r(q,p)=\partial_{q}H(q,p,A^*)={(A^*)}^{\top}p,
 \]
@@ -1869,7 +1882,7 @@ t_{\text{Hamiltonien}} \approx 0.91\,\text{s}, \qquad t_{\text{Scalaire}} \appro
   \includegraphics[width=0.48\textwidth]{../Images/DirectVsHamiltonian.png}
   \caption{Comparaison des temps d'exécution sur la rotation de la \texttt{Figure~\ref{fig:RecalageRotationSO2}}}
 \end{figure}
-L'approche scalaire est ici environ $1{,}6$ fois plus rapide que l'approche hamiltonienne. Cet écart s'explique par le nombre de variables intégrées à chaque pas de temps: l'approche directe ne propage que la position $x_t$, tandis que l'approche hamiltonienne propage simultanément la position $x_t$ \emph{et} le moment $p_t$, ce qui double la quantité de calcul à chaque itération d'Euler tout en recalculant $A^*_t$ à partir des deux tenseurs courants. En contrepartie, rappelons que l'approche hamiltonienne optimise un vecteur $p_0$ de même dimension que les nuages de points, ce qui la rend directement généralisable à des dynamiques bien plus riches (comme $SO(3)$ ou le cadre LDDMM général avec les difféomorphismes en dimension infinie), là où l'approche scalaire directe repose spécifiquement sur la paramétrisation par un angle $\omega$ propre à $SO(2)$.
+L'approche scalaire est ici environ $1{,}6$ fois plus rapide que l'approche hamiltonienne sur cette expérience particulière. Cet écart s'explique par le nombre de variables intégrées à chaque pas de temps: l'approche directe ne propage que la position $x_t$, tandis que l'approche hamiltonienne propage simultanément la position $x_t$ \emph{et} le moment $p_t$, ce qui double la quantité de calcul à chaque itération d'Euler tout en recalculant $A^*_t$ à partir des deux tenseurs courants. En contrepartie, rappelons que l'approche hamiltonienne optimise un vecteur $p_0$ de même dimension que les nuages de points, ce qui la rend directement généralisable à des dynamiques bien plus riches (comme $SO(3)$ ou le cadre LDDMM général avec les difféomorphismes en dimension infinie), là où l'approche scalaire directe repose spécifiquement sur la paramétrisation par un angle $\omega$ propre à $SO(2)$.
 \end{exemple}
 
 
@@ -1883,7 +1896,7 @@ La formulation hamiltonienne a constitué l'une des notions les plus challengean
 
 D'un point de vue algorithmique: les deux implémentations, l'approche directe et le tir géodésique, ont confirmé l'efficacité du modèle lorsque la transformation est une rotation rigide, en mettant aussi en évidence ses limites quand on se restreint à ces transformations ``simples''. Dès qu'interviennent des déformations non rigides, la restriction à $SO(n)$ ne permet plus de représenter correctement les transformations. Ce travail met ainsi en lumière un compromis entre la rapidité de l'approche directe et la généralité de l'approche hamiltonienne.
 
-Plusieurs prolongements naturels sont possibles, notamment l'abandon de la limitation aux rotations afin de se rapprocher du modèle LDDMM complet, ou encore l'extension aux formes plus riches que les simples landmarks. Au-delà de ces perspectives, ce stage a surtout constitué une occasion de mettre en pratique les outils d'algèbre et d'équa-diff, vu en cours théorique, dans un contexte appliqué. Il a aussi ouvert des portes sur des domaines des mathématiques pas étudiées en $2^{\text{ème}}$ année de licence.
+Plusieurs prolongements naturels sont possibles, notamment l'abandon de la limitation aux rotations afin de se rapprocher du modèle LDDMM complet, ou encore l'extension aux formes plus riches que les simples landmarks. Au-delà de ces perspectives, ce stage a surtout constitué une occasion de mettre en pratique les outils d'algèbre et d'équa-diff, vus en cours théorique, dans un contexte appliqué. Il a aussi ouvert des portes sur des domaines des mathématiques pas étudiés en $2^{\text{e}}$ année de licence.
 
 
 % -= BIBLIOGRAPHIE =-
