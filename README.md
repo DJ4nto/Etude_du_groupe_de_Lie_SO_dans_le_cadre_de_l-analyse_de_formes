@@ -34,16 +34,16 @@ Voici un exemple d'application du modèle sur le recalage d'une forme de coq en 
 ## Référence
 
 ```
-@misc{lecocq_2026_21557282,
-    author = {Antonin Lecocq},
-    title = {Étude du groupe de Lie $SO(n)$ dans le cadre de l'analyse de formes},
-    month = jul,
-    year = 2026,
-    publisher = {Zenodo},
-    version = {v1.0},
-    doi = {10.5281/zenodo.21557282},
-    url = {https://doi.org/10.5281/zenodo.21557282},
-    note = {Sous la direction de Rayane Mouhli}
+@techreport{lecocq2026son,
+  author = {Antonin Lecocq},
+  title = {Étude du groupe de Lie SO(n) dans le cadre de l'analyse de formes},
+  institution = {Université Paris Cité, MAP5},
+  type = {Research Internship Report},
+  year = {2026},
+  month = jul,
+  doi = {10.5281/zenodo.21557282},
+  url = {https://doi.org/10.5281/zenodo.21557282},
+  note = {Sous la direction de Rayane Mouhli.}
 }
 ```
 
