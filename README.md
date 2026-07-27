@@ -1,6 +1,6 @@
 # Étude du groupe de Lie $SO(n)$ dans le cadre de l’analyse de formes
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21557282.svg)](https://doi.org/10.5281/zenodo.21557282) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Description
 
@@ -34,12 +34,15 @@ Voici un exemple d'application du modèle sur le recalage d'une forme de coq en 
 ## Référence
 
 ```
-@techreport{Lecocq26,
+@misc{lecocq_2026_21557282,
     author = {Antonin Lecocq},
     title = {Étude du groupe de Lie $SO(n)$ dans le cadre de l'analyse de formes},
-    institution = {Université Paris Cité, MAP5},
-    type = {Rapport de stage de recherche},
-    year = {2026},
+    month = jul,
+    year = 2026,
+    publisher = {Zenodo},
+    version = {v1.0},
+    doi = {10.5281/zenodo.21557282},
+    url = {https://doi.org/10.5281/zenodo.21557282},
     note = {Sous la direction de Rayane Mouhli}
 }
 ```
